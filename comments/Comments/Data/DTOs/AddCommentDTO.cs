@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Comments.Models;
+using System.ComponentModel.DataAnnotations;
 
-namespace Comments.Data
+namespace Comments.Data.DTOs
 {
     public class AddCommentDTO
     {
@@ -8,7 +9,7 @@ namespace Comments.Data
         //public User Author { get; set; }
         //[Required]
         //public Post Post { get; set; }
-        //public Comment? ReplyTo { get; set; } // Optional, the comment that the origional comment is in reply to
+        public Comment? ReplyTo { get; set; } // Optional, the comment that the origional comment is in reply to
         [Required]
         [MaxLength(500)]
         [Editable(true)]

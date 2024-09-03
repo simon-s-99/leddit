@@ -1,4 +1,5 @@
 using Comments.Data;
+using Comments.Data.DTOs;
 using Comments.Models;
 using Comments.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,17 @@ namespace Comments.Controllers
         }
 
         [HttpPost]
-        public IEnumerable<Comment> AddComment([FromBody] AddCommentDTO comment)
+        public ActionResult<AddCommentDTO> AddComment([FromBody] AddCommentDTO comment)
         {
-            
+            try
+            {
+                Comment newComment = _service.AddComment(comment);
+                return Ok(new CommentDto(newComment));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

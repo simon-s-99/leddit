@@ -1,4 +1,5 @@
 ﻿using Comments.Data;
+using Comments.Data.DTOs;
 using Comments.Models;
 
 namespace Comments.Services
@@ -18,8 +19,17 @@ namespace Comments.Services
 
             Comment newComment = new Comment
             {
+                //Author = comment.Author,
+                //Post = comment.Post,
+                ReplyTo = comment.ReplyTo ?? null,
                 Body = comment.Body,
+
             };
+
+            _context.Comments.Add(newComment);
+            _context.SaveChanges();
+
+            return newComment;
         }
     }
 }
