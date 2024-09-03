@@ -39,7 +39,6 @@ namespace Comments
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.Run();
