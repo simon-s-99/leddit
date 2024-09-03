@@ -1,6 +1,7 @@
 using Comments.Data;
 using Comments.Data.DTOs;
 using Comments.Models;
+using Comments.Models.DTOs;
 using Comments.Services;
 using Microsoft.AspNetCore.Mvc;
 

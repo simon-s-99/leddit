@@ -1,7 +1,7 @@
 ﻿using Comments.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace Comments.Data.DTOs
+namespace Comments.Models.DTOs
 {
     public class AddCommentDTO
     {

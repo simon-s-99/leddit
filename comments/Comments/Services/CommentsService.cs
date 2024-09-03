@@ -1,6 +1,6 @@
 ﻿using Comments.Data;
-using Comments.Data.DTOs;
 using Comments.Models;
+using Comments.Models.DTOs;
 
 namespace Comments.Services
 {
@@ -31,5 +31,7 @@ namespace Comments.Services
 
             return newComment;
         }
+
+        public 
     }
 }
