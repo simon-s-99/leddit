@@ -1,12 +1,14 @@
 ﻿using Comments.Data;
 using Comments.Models;
 using Comments.Models.DTOs;
+using Microsoft.IdentityModel.Tokens;
+using System.Web.Http;
 
 namespace Comments.Services
 {
     public class CommentsService
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public CommentsService(ApplicationDbContext context)
         {
@@ -15,7 +17,11 @@ namespace Comments.Services
 
         public Comment AddComment(AddCommentDTO comment)
         {
-            //TODO: Add validation middleware
+            if (comment.Body.IsNullOrEmpty())
+            {
+                // Throw a new 404 response if comment body is empty
+                throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+            }
 
             Comment newComment = new Comment
             {
@@ -32,6 +38,20 @@ namespace Comments.Services
             return newComment;
         }
 
-        public 
+        public Comment DeleteComment(Guid id)
+        {
+            var commentToDelete = _context.Comments.Where(c => c.Id == id).FirstOrDefault();
+
+            if (commentToDelete is null)
+            {
+                // Throw a new 404 response if no comment was found
+                throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+            }
+
+            _context.Comments.Remove(commentToDelete);
+            _context.SaveChanges();
+
+            return commentToDelete;
+        }
     }
 }

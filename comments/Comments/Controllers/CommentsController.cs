@@ -1,5 +1,4 @@
 using Comments.Data;
-using Comments.Data.DTOs;
 using Comments.Models;
 using Comments.Models.DTOs;
 using Comments.Services;
@@ -11,7 +10,7 @@ namespace Comments.Controllers
     [Route("/comments")]
     public class CommentsController : ControllerBase
     {
-        private CommentsService _service;
+        private readonly CommentsService _service;
 
         public CommentsController(CommentsService service)
         {
@@ -19,14 +18,29 @@ namespace Comments.Controllers
         }
 
         [HttpPost]
-        public ActionResult<AddCommentDTO> AddComment([FromBody] AddCommentDTO comment)
+        public ActionResult<AddCommentDTO> AddComment([FromBody] AddCommentDTO comment) // Get DTO from request body
         {
             try
             {
                 Comment newComment = _service.AddComment(comment);
-                return Ok(new CommentDto(newComment));
+                return Ok(newComment);
             }
             catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        //TODO: Handle user authorization
+        public ActionResult<Comment> DeleteComment([FromQuery] Guid id)
+        {
+            try
+            {
+                Comment commentToDelete = _service.DeleteComment(id);
+                return Ok(commentToDelete);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
