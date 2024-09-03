@@ -45,5 +45,20 @@ namespace Comments.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPatch]
+        //TODO: Handle user authorization
+        public ActionResult<Comment> EditComment([FromQuery] Guid id, [FromBody] EditCommentDTO comment)
+        {
+            try
+            {
+                Comment commentToUpdate = _service.EditComment(id, comment);
+                return Ok(commentToUpdate);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

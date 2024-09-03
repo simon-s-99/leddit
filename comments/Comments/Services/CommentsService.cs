@@ -53,5 +53,21 @@ namespace Comments.Services
 
             return commentToDelete;
         }
+
+        public Comment EditComment(Guid id, EditCommentDTO comment)
+        {
+            Comment commentToUpdate = _context.Comments.Where(c => c.Id == id).FirstOrDefault();
+
+            if (comment.Body.IsNullOrEmpty() || commentToUpdate is null)
+            {
+                // Throw a new 404 response if comment body is empty
+                throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+            }
+
+            commentToUpdate.Body = comment.Body;
+            _context.SaveChanges();
+
+            return commentToUpdate;
+        }
     }
 }
