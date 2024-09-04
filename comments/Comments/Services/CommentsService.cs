@@ -27,12 +27,17 @@ namespace Comments.Services
             {
                 //Author = comment.Author,
                 //Post = comment.Post,
-                ReplyTo = comment.ReplyTo ?? null,
+                ReplyTo = comment.ReplyTo ?? null, // If reply exists, add it, otherwise send null
                 Body = comment.Body,
-
             };
 
-            _context.Comments.Add(newComment);
+            if (newComment.ReplyTo is not null)
+            {
+                // If reply id is not null but the reply itself is null, throw an HTTP exception
+                var reply = _context.Comments.Where(c => c.Id == newComment.Id).FirstOrDefault() ?? throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+			}
+
+			_context.Comments.Add(newComment);
             _context.SaveChanges();
 
             return newComment;
@@ -56,7 +61,7 @@ namespace Comments.Services
 
         public Comment EditComment(Guid id, EditCommentDTO comment)
         {
-            Comment commentToUpdate = _context.Comments.Where(c => c.Id == id).FirstOrDefault();
+            var commentToUpdate = _context.Comments.Where(c => c.Id == id).FirstOrDefault();
 
             if (comment.Body.IsNullOrEmpty() || commentToUpdate is null)
             {

@@ -18,7 +18,7 @@ namespace Comments.Controllers
         }
 
         [HttpPost]
-        public ActionResult<AddCommentDTO> AddComment([FromBody] AddCommentDTO comment) // Get DTO from request body
+        public ActionResult<AddCommentDTO> AddComment([FromBody] AddCommentDTO comment)
         {
             try
             {
