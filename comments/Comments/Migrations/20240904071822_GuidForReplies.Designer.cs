@@ -4,6 +4,7 @@ using Comments.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comments.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240904071822_GuidForReplies")]
+    partial class GuidForReplies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,23 +36,12 @@ namespace Comments.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<Guid?>("ReplyToId")
+                    b.Property<Guid?>("ReplyTo")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReplyToId");
-
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("Comments.Models.Comment", b =>
-                {
-                    b.HasOne("Comments.Models.Comment", "ReplyTo")
-                        .WithMany()
-                        .HasForeignKey("ReplyToId");
-
-                    b.Navigation("ReplyTo");
                 });
 #pragma warning restore 612, 618
         }
