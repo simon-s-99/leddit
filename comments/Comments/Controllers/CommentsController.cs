@@ -1,4 +1,3 @@
-using Comments.Data;
 using Comments.Models;
 using Comments.Models.DTOs;
 using Comments.Services;
