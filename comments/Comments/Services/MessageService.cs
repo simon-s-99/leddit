@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Connections;
+﻿using Comments.Models;
+using Microsoft.AspNetCore.Connections;
 using Microsoft.EntityFrameworkCore.Metadata;
 using RabbitMQ.Client;
+using System.Text;
+using System.Text.Json;
 
 namespace Comments.Services
 {
@@ -20,14 +23,12 @@ namespace Comments.Services
             };
         }
 
-        public void ListenForMessages()
+        public void NotifyNewCommentAdded(Comment comment)
         {
-            channel.ExchangeDeclare(exchange: "add-comment", type: ExchangeType.Fanout);
+            var commentJson = JsonSerializer.Serialize(comment);
+            var message = Encoding.UTF8.GetBytes(commentJson);
 
-            var queue = channel.QueueDeclare("comments", true, false, false);
-            channel.QueueBind(queue: queue, exchange: "add-comment", routingKey: String.Empty);
-
-
+            channel.BasicPublish("add-comment", string.Empty, null, message);
         }
 
         public void Connect()
@@ -35,6 +36,18 @@ namespace Comments.Services
             var connectionFactory = new ConnectionFactory { HostName = "localhost", Port = 5199};
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
+
+            channel.ExchangeDeclare("add-movie", ExchangeType.Fanout);
         }
-    }
+
+        public async Task StartAsync(CancellationToken token)
+        {
+
+        }
+
+		public async Task StopAsync(CancellationToken token)
+		{
+
+		}
+	}
 }
