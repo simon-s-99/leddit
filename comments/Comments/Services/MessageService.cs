@@ -1,6 +1,4 @@
 ﻿using Comments.Models;
-using Microsoft.AspNetCore.Connections;
-using Microsoft.EntityFrameworkCore.Metadata;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
@@ -9,45 +7,42 @@ namespace Comments.Services
 {
     public class MessageService : IHostedService
     {
-        private IConnection connection;
-        private RabbitMQ.Client.IModel channel;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly HttpClient _httpClient;
+        private IConnection? connection;
+        private IModel? channel;
 
-        public MessageService(IServiceProvider serviceProvider)
+        // Notifies about certain events regarding comments, exhanges are passed to the method
+        public void NotifyCommentChanged(string exchange, Comment comment)
         {
-            _serviceProvider = serviceProvider;
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("http://localhost:5199")
-            };
+			var commentJson = JsonSerializer.Serialize(comment);
+			var message = Encoding.UTF8.GetBytes(commentJson);
+
+			channel.BasicPublish(exchange, string.Empty, null, message);
         }
 
-        public void NotifyNewCommentAdded(Comment comment)
-        {
-            var commentJson = JsonSerializer.Serialize(comment);
-            var message = Encoding.UTF8.GetBytes(commentJson);
-
-            channel.BasicPublish("add-comment", string.Empty, null, message);
-        }
-
-        public void Connect()
+		public void Connect()
         {
             var connectionFactory = new ConnectionFactory { HostName = "localhost", Port = 5199};
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
 
+            // Register three different exchanges
             channel.ExchangeDeclare("add-movie", ExchangeType.Fanout);
-        }
+			channel.ExchangeDeclare("delete-movie", ExchangeType.Fanout);
+            channel.ExchangeDeclare("edit-movie", ExchangeType.Fanout);
+		}
 
-        public async Task StartAsync(CancellationToken token)
+		public Task StartAsync(CancellationToken token)
         {
-
+            Connect();
+            return Task.CompletedTask;
         }
 
-		public async Task StopAsync(CancellationToken token)
+		public Task StopAsync(CancellationToken token)
 		{
+            channel?.Close();
+            connection?.Close();
 
+            return Task.CompletedTask;
 		}
 	}
 }
