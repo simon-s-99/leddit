@@ -18,9 +18,13 @@ namespace Comments
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
+
             builder.Services.AddScoped<CommentsService>();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddHostedService<MessageService>();
+            builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<MessageService>().First());
 
             var app = builder.Build();
 

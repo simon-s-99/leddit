@@ -32,8 +32,7 @@ namespace Comments.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "Author,Administrator")]
-        //TODO: Handle user authorization
+        //[Authorize(Roles = "Author,Administrator")]
 
         public ActionResult<Comment> DeleteComment([FromQuery] Guid id)
         {
@@ -49,8 +48,7 @@ namespace Comments.Controllers
         }
 
         [HttpPatch]
-        //TODO: Handle user authorization
-        [Authorize(Roles = "Author")]
+        //[Authorize(Roles = "Author")]
 
         public ActionResult<Comment> EditComment([FromQuery] Guid id, [FromBody] EditCommentDTO comment)
         {
