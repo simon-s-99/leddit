@@ -1,6 +1,7 @@
 using Comments.Models;
 using Comments.Models.DTOs;
 using Comments.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Comments.Controllers
@@ -31,7 +32,9 @@ namespace Comments.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Author,Administrator")]
         //TODO: Handle user authorization
+
         public ActionResult<Comment> DeleteComment([FromQuery] Guid id)
         {
             try
@@ -47,6 +50,8 @@ namespace Comments.Controllers
 
         [HttpPatch]
         //TODO: Handle user authorization
+        [Authorize(Roles = "Author")]
+
         public ActionResult<Comment> EditComment([FromQuery] Guid id, [FromBody] EditCommentDTO comment)
         {
             try

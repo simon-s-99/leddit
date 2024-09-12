@@ -25,6 +25,7 @@ namespace Comments.Services
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
 
+            Console.WriteLine("Connected");
             // Register three different exchanges
             channel.ExchangeDeclare("add-movie", ExchangeType.Fanout);
 			channel.ExchangeDeclare("delete-movie", ExchangeType.Fanout);
