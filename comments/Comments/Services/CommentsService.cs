@@ -9,10 +9,12 @@ namespace Comments.Services
     public class CommentsService
     {
         private readonly ApplicationDbContext _context;
+        private readonly MessageService _messageService;
 
-        public CommentsService(ApplicationDbContext context)
+        public CommentsService(ApplicationDbContext context, MessageService messageService)
         {
             _context = context;
+            _messageService = messageService;
         }
 
         public Comment AddComment(AddCommentDTO comment)
@@ -40,6 +42,8 @@ namespace Comments.Services
 			_context.Comments.Add(newComment);
             _context.SaveChanges();
 
+            _messageService.NotifyCommentChanged("add-comment", newComment);
+
             return newComment;
         }
 
@@ -56,6 +60,9 @@ namespace Comments.Services
             _context.Comments.Remove(commentToDelete);
             _context.SaveChanges();
 
+            _messageService.NotifyCommentChanged("delete-comment", commentToDelete);
+
+
             return commentToDelete;
         }
 
@@ -71,6 +78,9 @@ namespace Comments.Services
 
             commentToUpdate.Body = comment.Body;
             _context.SaveChanges();
+
+            _messageService.NotifyCommentChanged("edit-comment", commentToUpdate);
+
 
             return commentToUpdate;
         }
