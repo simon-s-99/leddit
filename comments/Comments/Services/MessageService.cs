@@ -21,7 +21,7 @@ namespace Comments.Services
 
 		public void Connect()
         {
-            var connectionFactory = new ConnectionFactory { HostName = "localhost", Port = 5199};
+            var connectionFactory = new ConnectionFactory { HostName = "localhost", Port = 5672, UserName = "guest", Password = "guest"};
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
 
