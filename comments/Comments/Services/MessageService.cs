@@ -25,11 +25,10 @@ namespace Comments.Services
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
 
-            Console.WriteLine("Connected");
             // Register three different exchanges
-            channel.ExchangeDeclare("add-movie", ExchangeType.Fanout);
-			channel.ExchangeDeclare("delete-movie", ExchangeType.Fanout);
-            channel.ExchangeDeclare("edit-movie", ExchangeType.Fanout);
+            channel.ExchangeDeclare("add-comment", ExchangeType.Fanout);
+			channel.ExchangeDeclare("delete-comment", ExchangeType.Fanout);
+            channel.ExchangeDeclare("edit-comment", ExchangeType.Fanout);
 		}
 
 		public Task StartAsync(CancellationToken token)
