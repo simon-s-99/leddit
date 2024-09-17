@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Comments.Migrations
 {
     /// <inheritdoc />
-    public partial class GuidForReplies : Migration
+    public partial class DateCreated : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,6 +17,7 @@ namespace Comments.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ReplyTo = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Body = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
                 },
                 constraints: table =>

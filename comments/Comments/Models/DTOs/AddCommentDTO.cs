@@ -6,10 +6,13 @@ namespace Comments.Models.DTOs
     public class AddCommentDTO
     {
         //[Required]
-        //public User Author { get; set; }
+        //public Guid AuthorId { get; set; }
+
         //[Required]
-        //public Post Post { get; set; }
+        //public Guid PostId { get; set; }
+
         public Guid? ReplyTo { get; set; }
+
         [Required]
         [MaxLength(500)]
         [Editable(true)]

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comments.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240904071822_GuidForReplies")]
-    partial class GuidForReplies
+    [Migration("20240917145351_DateCreated")]
+    partial class DateCreated
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,9 @@ namespace Comments.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("ReplyTo")
                         .HasColumnType("uniqueidentifier");

@@ -6,11 +6,18 @@ namespace Comments.Models
     {
         [Required]
         public Guid Id { get; set; }
+
         //[Required]
-        //public User Author { get; set; }
+        //public Guid AuthorId { get; set; }
+
         //[Required]
-        //public Post Post { get; set; }
-        public Guid? ReplyTo { get; set; } // Optional, the id of the comment that the origional comment is in reply to
+        //public Guid PostId { get; set; }
+
+        public Guid? ReplyTo { get; set; } // Optional, the id of the comment that the original comment is in reply to
+
+        [Required]
+        public DateTime DateCreated { get; set; }
+
         [Required]
         [MaxLength(500)]
         [Editable(true)]

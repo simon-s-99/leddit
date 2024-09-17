@@ -27,9 +27,10 @@ namespace Comments.Services
 
             Comment newComment = new Comment
             {
-                //Author = comment.Author,
-                //Post = comment.Post,
+                //AuthorId = comment.AuthorId,
+                //PostId = comment.PostId,
                 ReplyTo = comment.ReplyTo ?? null, // If reply exists, add it, otherwise send null
+                DateCreated = DateTime.UtcNow,
                 Body = comment.Body,
             };
 
@@ -77,6 +78,7 @@ namespace Comments.Services
             }
 
             commentToUpdate.Body = comment.Body;
+            commentToUpdate.DateCreated = DateTime.UtcNow;
             _context.SaveChanges();
 
             _messageService.NotifyCommentChanged("edit-comment", commentToUpdate);
