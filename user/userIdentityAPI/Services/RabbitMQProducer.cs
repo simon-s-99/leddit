@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace userIdentityAPI.Services
 {
-    public class RabbitMQProducer : IHostedService
+    public class RabbitMQProducer : IHostedService, IDisposable
     {
         private IConnection? _connection;
         private IModel? _channel;
@@ -24,6 +24,8 @@ namespace userIdentityAPI.Services
 
         public void SendMessage(string exchange, object data)
         {
+            if (_channel == null) return;
+
             var message = JsonSerializer.Serialize(data);
             var body = Encoding.UTF8.GetBytes(message);
 
@@ -66,6 +68,13 @@ namespace userIdentityAPI.Services
             _connection.Close();
 
             return Task.CompletedTask;
+        }
+
+        // IDisposable interface to cleanly release resources (like _connection and _channel) when the service is stopped or disposed
+        public void Dispose()
+        {
+            _channel?.Dispose();
+            _connection?.Dispose();
         }
     }
 }
