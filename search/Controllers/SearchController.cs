@@ -14,5 +14,10 @@ namespace Search.Controllers
             SearchResult[] searchResults = []; // <-- remove this later, temporary code 
             return searchResults; // <-- remove this later, temporary code
         }
+
+        //
+        // Implement search/querying the elasticsearch db
+        // info here: https://www.elastic.co/guide/en/elasticsearch/client/net-api/current/getting-started-net.html#_operations 
+        //
     }
 }
