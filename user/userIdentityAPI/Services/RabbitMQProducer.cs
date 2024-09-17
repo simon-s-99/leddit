@@ -1,7 +1,6 @@
 ﻿using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Hosting;
 
 namespace userIdentityAPI.Services
 {

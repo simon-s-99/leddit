@@ -44,7 +44,7 @@ namespace UserService.Controllers
             var userDto = new UserProfileDto { UserId = user.Id, Username = user.UserName, Email = user.Email };
             _producer.SendMessage("UserRegistered", userDto);
 
-            return Ok("User registered successfully");
+            return Ok($"User {user} registered successfully");
         }
 
         [HttpGet("profile/{username}")]
@@ -61,7 +61,7 @@ namespace UserService.Controllers
                 UserId = user.Id,
                 Username = user.UserName,
                 Email = user.Email,
-                DisplayName = user.DisplayName,
+                //DisplayName = user.DisplayName,
                 ProfilePictureUrl = user.ProfilePictureUrl,
                 Bio = user.Bio,
                 DateOfBirth = user.DateOfBirth
