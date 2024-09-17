@@ -4,7 +4,7 @@ using Search.Models;
 namespace Search.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class SearchController : ControllerBase
     {
         [HttpGet(Name = "Search")]
