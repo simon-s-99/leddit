@@ -13,36 +13,37 @@ namespace Comments.Services
         // Notifies about certain events regarding comments, exhanges are passed to the method
         public void NotifyCommentChanged(string exchange, Comment comment)
         {
-			var commentJson = JsonSerializer.Serialize(comment);
-			var message = Encoding.UTF8.GetBytes(commentJson);
+            var commentJson = JsonSerializer.Serialize(comment);
+            var message = Encoding.UTF8.GetBytes(commentJson);
 
-			channel.BasicPublish(exchange, string.Empty, null, message);
+            channel.BasicPublish(exchange, string.Empty, null, message);
         }
 
-		public void Connect()
+        public void Connect()
         {
-            var connectionFactory = new ConnectionFactory { HostName = "localhost", Port = 5672, UserName = "guest", Password = "guest"};
+            // Use default username and password to connect
+            var connectionFactory = new ConnectionFactory { HostName = "localhost", Port = 5672, UserName = "guest", Password = "guest" };
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
 
             // Register three different exchanges
             channel.ExchangeDeclare("add-comment", ExchangeType.Fanout);
-			channel.ExchangeDeclare("delete-comment", ExchangeType.Fanout);
+            channel.ExchangeDeclare("delete-comment", ExchangeType.Fanout);
             channel.ExchangeDeclare("edit-comment", ExchangeType.Fanout);
-		}
+        }
 
-		public Task StartAsync(CancellationToken token)
+        public Task StartAsync(CancellationToken token)
         {
             Connect();
             return Task.CompletedTask;
         }
 
-		public Task StopAsync(CancellationToken token)
-		{
+        public Task StopAsync(CancellationToken token)
+        {
             channel?.Close();
             connection?.Close();
 
             return Task.CompletedTask;
-		}
-	}
+        }
+    }
 }

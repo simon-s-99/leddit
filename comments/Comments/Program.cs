@@ -13,7 +13,7 @@ namespace Comments
 
             builder.Services.AddControllers();
 
-            var connectionString = builder.Configuration.GetConnectionString("local") ?? throw new InvalidOperationException("Connection string 'local' not found.");
+            var connectionString = builder.Configuration.GetConnectionString("local") ?? throw new InvalidOperationException("Connection string not found.");
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));

@@ -25,7 +25,7 @@ namespace Comments.Controllers
                 Comment newComment = _service.AddComment(comment);
                 return Ok(newComment);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

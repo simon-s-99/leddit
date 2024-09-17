@@ -37,11 +37,12 @@ namespace Comments.Services
             {
                 // If reply id is not null but the reply itself is null, throw an HTTP exception
                 var reply = _context.Comments.Where(c => c.Id == newComment.Id).FirstOrDefault() ?? throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
-			}
+            }
 
-			_context.Comments.Add(newComment);
+            _context.Comments.Add(newComment);
             _context.SaveChanges();
 
+            // Send message to the "add-comment" exchange
             _messageService.NotifyCommentChanged("add-comment", newComment);
 
             return newComment;
@@ -62,7 +63,6 @@ namespace Comments.Services
 
             _messageService.NotifyCommentChanged("delete-comment", commentToDelete);
 
-
             return commentToDelete;
         }
 
@@ -80,7 +80,6 @@ namespace Comments.Services
             _context.SaveChanges();
 
             _messageService.NotifyCommentChanged("edit-comment", commentToUpdate);
-
 
             return commentToUpdate;
         }
