@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using userIdentityAPI.Data;
+using userIdentityAPI.Services;
 
 namespace userIdentityAPI
 {
@@ -33,6 +34,10 @@ namespace userIdentityAPI
                     googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
                     googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
                 });
+
+            // Register RabbitMQProducer as a hosted service
+            builder.Services.AddHostedService<RabbitMQProducer>();
+            builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<RabbitMQProducer>().First());
 
             var app = builder.Build();
 
