@@ -8,10 +8,12 @@ namespace post.Services
     public class PostService
     {
         private readonly ApplicationDbContext _context;
+        private readonly MessageService _messageService;
 
-        public PostService(ApplicationDbContext context)
+        public PostService(ApplicationDbContext context, MessageService messageService)
         {
             _context = context;
+            _messageService = messageService;
         }
 
         public async Task<int> CreatePostAsync(CreatePostDTO dto)
@@ -25,6 +27,7 @@ namespace post.Services
 
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
+            _messageService.NotifyPostChanged("add-post", post);
             return post.Id;
         }
 
@@ -40,6 +43,7 @@ namespace post.Services
             post.Content = dto.Content;
 
             await _context.SaveChangesAsync();
+            _messageService.NotifyPostChanged("update-post", post);
         }
     }
 }
