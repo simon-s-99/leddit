@@ -1,5 +1,7 @@
 ﻿using Comments.Models;
+using Comments.Models.DTOs;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 
@@ -9,6 +11,17 @@ namespace Comments.Services
     {
         private IConnection? connection;
         private IModel? channel;
+        private IServiceProvider? provider;
+        private HttpClient httpClient;
+
+        public MessageService(IServiceProvider? provider)
+        {
+            this.provider = provider;
+            this.httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("http://localhost:5672")
+            };
+        }
 
         // Notifies about certain events regarding comments, exhanges are passed to the method
         public void NotifyCommentChanged(string exchange, Comment comment)
@@ -32,9 +45,43 @@ namespace Comments.Services
             channel.ExchangeDeclare("edit-comment", ExchangeType.Fanout);
         }
 
+        public void ListenForMessages()
+        {
+            channel.ExchangeDeclare("add-comment", ExchangeType.Fanout);
+            var queue = channel.QueueDeclare("comment", true, false, false);
+            channel.QueueBind(queue, "add-comment", string.Empty);
+
+            var consumer = new EventingBasicConsumer(channel);
+
+            consumer.Received += (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var json = Encoding.UTF8.GetString(body);
+
+                try
+                {
+                    var comment = JsonSerializer.Deserialize<AddCommentDTO>(json);
+                    Console.WriteLine("Created comment " + comment.Body);
+
+                    using (var scope = provider.CreateScope())
+                    {
+                        var commentsService = scope.ServiceProvider.GetRequiredService<CommentsService>();
+                        commentsService.AddComment(comment);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            };
+
+            channel.BasicConsume(queue, true, consumer);
+        }
+
         public Task StartAsync(CancellationToken token)
         {
             Connect();
+            ListenForMessages();
             return Task.CompletedTask;
         }
 
