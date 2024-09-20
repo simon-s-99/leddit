@@ -24,36 +24,55 @@ namespace userIdentityAPI.Services
 
         public void SendMessage(string exchange, object data)
         {
-            if (_channel == null) return;
+            try
+            {
+                if (_channel == null) return;
 
-            var message = JsonSerializer.Serialize(data);
-            var body = Encoding.UTF8.GetBytes(message);
+                var message = JsonSerializer.Serialize(data);
+                var body = Encoding.UTF8.GetBytes(message);
 
-            _channel.BasicPublish(exchange, routingKey: "", basicProperties: null, body: body);
+                _channel.BasicPublish(exchange, routingKey: "", basicProperties: null, body: body);
+
+                // logging to test if message gets sent
+                Console.WriteLine($"Message sent to exchange '{exchange}': {message}");
+            }
+            catch (Exception ex)
+            {
+                // Log or handle any exceptions here, especially for debugging
+                Console.WriteLine($"Error sending message: {ex.Message}");
+            }
         }
 
         public void Connect()
         {
-            // Create connection and channel
-            _connection = _connectionFactory.CreateConnection();
-            _channel = _connection.CreateModel();
+            try
+            {
+                // Create connection and channel
+                _connection = _connectionFactory.CreateConnection();
+                _channel = _connection.CreateModel();
 
-            //_channel.ExchangeDeclare("user-registered", ExchangeType.Fanout);
-            //_channel.ExchangeDeclare("user-updated", ExchangeType.Fanout);
-            //_channel.ExchangeDeclare("user-deleted", ExchangeType.Fanout);
+                //_channel.ExchangeDeclare("user-registered", ExchangeType.Fanout);
+                //_channel.ExchangeDeclare("user-updated", ExchangeType.Fanout);
+                //_channel.ExchangeDeclare("user-deleted", ExchangeType.Fanout);
 
-            _channel.ExchangeDeclare(exchange: "register-user", type: ExchangeType.Fanout);
-            _channel.ExchangeDeclare(exchange: "update-user", type: ExchangeType.Fanout);
-            _channel.ExchangeDeclare(exchange: "delete-user", type: ExchangeType.Fanout);
+                // Declare Exchanges and Queues
+                _channel.ExchangeDeclare(exchange: "register-user", type: ExchangeType.Fanout);
+                _channel.ExchangeDeclare(exchange: "update-user", type: ExchangeType.Fanout);
+                _channel.ExchangeDeclare(exchange: "delete-user", type: ExchangeType.Fanout);
 
+                // Declare and bind queues
+                _channel.QueueDeclare(queue: "register-user-queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+                _channel.QueueDeclare(queue: "update-user-queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
+                _channel.QueueDeclare(queue: "delete-user-queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
 
-            _channel.QueueDeclare(queue: "register-user-queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
-            _channel.QueueDeclare(queue: "update-user-queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
-            _channel.QueueDeclare(queue: "delete-user-queue", durable: false, exclusive: false, autoDelete: false, arguments: null);
-
-            _channel.QueueBind(queue: "register-user-queue", exchange: "register-user", routingKey: "");
-            _channel.QueueBind(queue: "update-user-queue", exchange: "update-user", routingKey: "");
-            _channel.QueueBind(queue: "delete-user-queue", exchange: "delete-user", routingKey: "");
+                _channel.QueueBind(queue: "register-user-queue", exchange: "register-user", routingKey: "");
+                _channel.QueueBind(queue: "update-user-queue", exchange: "update-user", routingKey: "");
+                _channel.QueueBind(queue: "delete-user-queue", exchange: "delete-user", routingKey: "");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"RabbitMQ connection error: {ex.Message}");
+            }
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

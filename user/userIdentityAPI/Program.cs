@@ -18,21 +18,19 @@ namespace userIdentityAPI
                 builder.Configuration.AddUserSecrets<Program>();
             }
 
-            static void Main(string[] args)
-            {
-                HttpClient client = new HttpClient { BaseAddress = new Uri("http://10.110.47.63:8080/") }; // uri needs to change
+            //HttpClient client = new HttpClient { BaseAddress = new Uri("http://10.110.47.63:8080/") }; // uri needs to change?
 
-                var webRequest = new HttpRequestMessage(HttpMethod.Get, "api/movies?search=test");
+            //var webRequest = new HttpRequestMessage(HttpMethod.Get, "api/movies?search=test");
 
-                var response = client.Send(webRequest);
-                Console.WriteLine("Sent");
-                Console.WriteLine(response);
+            //var response = client.Send(webRequest);
+            //Console.WriteLine("Sent");
+            //Console.WriteLine(response);
 
-                // Läs in kropp i form av JSON och omvandla till objekt
-                using var reader = new StreamReader(response.Content.ReadAsStream());
-                var json = reader.ReadToEnd();
-                Console.WriteLine(json);
-            }
+            //// Läs in kropp i form av JSON och omvandla till objekt
+            //using var reader = new StreamReader(response.Content.ReadAsStream());
+            //var json = reader.ReadToEnd();
+            //Console.WriteLine(json);
+
 
             //// Configure the HTTP request pipeline.
             //if (app.Environment.IsDevelopment())
@@ -53,8 +51,8 @@ namespace userIdentityAPI
             builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false; // Disable email confirmation
-                options.Password.RequireDigit = true; 
-                options.Password.RequiredLength = 6;  
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
 
@@ -72,7 +70,7 @@ namespace userIdentityAPI
             builder.Services.AddHostedService<RabbitMQProducer>();
             builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<RabbitMQProducer>().First());
 
-            var app = builder.Build();
+            var app = builder.Build();          
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

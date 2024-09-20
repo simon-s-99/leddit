@@ -38,7 +38,16 @@ namespace UserService.Controllers
             var result = await _userManager.CreateAsync(user, registerUserDto.Password);
 
             if (!result.Succeeded)
+            {
+                if (result.Errors.Any(e => e.Code == "DuplicateUserName"))                
+                    return BadRequest("Username is already taken");
+                
+
+                if (result.Errors.Any(e => e.Code == "DuplicateEmail"))              
+                    return BadRequest("Email is already in use");
+                
                 return BadRequest(result.Errors);
+            }
 
             // Publish the UserRegistered event without the password
             var userDto = new UserProfileDto { UserId = user.Id, Username = user.UserName, Email = user.Email };
@@ -61,7 +70,7 @@ namespace UserService.Controllers
                 UserId = user.Id,
                 Username = user.UserName,
                 Email = user.Email,
-                //DisplayName = user.DisplayName,
+                DisplayName = user.DisplayName,
                 ProfilePictureUrl = user.ProfilePictureUrl,
                 Bio = user.Bio,
                 DateOfBirth = user.DateOfBirth
