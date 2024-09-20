@@ -37,7 +37,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: elasticsearch-main-deployment
+  name: elasticsearch-main
 spec:
   replicas: 1
   selector:
