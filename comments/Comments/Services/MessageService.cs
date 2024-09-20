@@ -19,7 +19,7 @@ namespace Comments.Services
             this.provider = provider;
             this.httpClient = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:5672")
+                BaseAddress = new Uri("http://localhost:5199")
             };
         }
 
@@ -35,7 +35,7 @@ namespace Comments.Services
         public void Connect()
         {
             // Use default username and password to connect
-            var connectionFactory = new ConnectionFactory { HostName = "localhost", Port = 5672, UserName = "guest", Password = "guest" };
+            var connectionFactory = new ConnectionFactory { HostName = "rabbitmq", Port = 5672, UserName = "guest", Password = "guest" };
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
 
