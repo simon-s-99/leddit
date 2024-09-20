@@ -32,8 +32,8 @@ namespace post.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePost(int id, [FromBody] UpdatePostDTO dto)
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdatePost(Guid id, [FromBody] UpdatePostDTO dto)
         {
             try
             {

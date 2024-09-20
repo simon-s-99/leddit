@@ -16,10 +16,10 @@ namespace post.Services
             _messageService = messageService;
         }
 
-        public async Task<int> CreatePostAsync(CreatePostDTO dto)
+        public async Task<Guid> CreatePostAsync(CreatePostDTO dto)
         {
             var post = new Post
-            {
+            {   
                 Title = dto.Title,
                 Content = dto.Content,
                 UserId = dto.UserId
@@ -31,7 +31,7 @@ namespace post.Services
             return post.Id;
         }
 
-        public async Task UpdatePostAsync(int id, UpdatePostDTO dto)
+        public async Task UpdatePostAsync(Guid id, UpdatePostDTO dto)
         {
             var post = await _context.Posts.FindAsync(id);
             if (post == null)
