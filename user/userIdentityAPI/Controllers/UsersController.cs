@@ -85,6 +85,13 @@ namespace UserService.Controllers
 
         }
 
+        [Authorize]
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            return Ok("User logged out successfully");
+        }
+
         [HttpGet("profile/{username}")]
         public async Task<IActionResult> GetUserProfile(string username)
         {
