@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
+using userIdentityAPI.DTOs;
 using userIdentityAPI.Models;
 using userIdentityAPI.Services;
 using UserService.DTOs;
@@ -56,6 +61,26 @@ namespace UserService.Controllers
             return Ok($"User {user} registered successfully");
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            //PasswordSignInAsync for login
+            var result = await _signInManager.PasswordSignInAsync(loginUserDto.Username, loginUserDto.Password, false, false);
+
+            if (!result.Succeeded)
+                return Unauthorized("Invalid credentials");
+
+            // Get the user to generate a token. We need this token in order to test our [Put}Profile api call
+            var user = await _userManager.FindByNameAsync(loginUserDto.Username);
+            var token = GenerateJwtToken(user);
+
+            return Ok(new { token });
+            //return Ok("User logged in successfully");
+        }
+
         [HttpGet("profile/{username}")]
         public async Task<IActionResult> GetUserProfile(string username)
         {
@@ -79,19 +104,58 @@ namespace UserService.Controllers
             return Ok(profile);
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
+        [Authorize]
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateUserProfile([FromBody] UpdateUserProfileDto updateUserProfileDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            // Get the current logged-in user
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
 
-            //PasswordSignInAsync for login
-            var result = await _signInManager.PasswordSignInAsync(loginUserDto.Username, loginUserDto.Password, false, false);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            // Update user fields
+            user.DisplayName = updateUserProfileDto.DisplayName;
+            user.Bio = updateUserProfileDto.Bio;
+            user.ProfilePictureUrl = updateUserProfileDto.ProfilePictureUrl;
+            user.DateOfBirth = updateUserProfileDto.DateOfBirth;
+
+            // Save the changes
+
+            var result = await _userManager.UpdateAsync(user);
 
             if (!result.Succeeded)
-                return Unauthorized("Invalid credentials");
+            {
+                return BadRequest(result.Errors);
+            }
 
-            return Ok("User logged in successfully");
+            return Ok("Profile updated successfully");
         }
+
+        private string GenerateJwtToken(ApplicationUser user)
+        {
+            var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("ThisIsAVerySecureAndLongEnoughSecretKey12345");
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.UserName)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = "UserProfile",
+                Audience = "UserProfile"
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
     }
 }
