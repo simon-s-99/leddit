@@ -56,7 +56,7 @@ spec:
             claimName: elasticsearch-pv-claim
       containers:
         - name: elasticsearch-main
-          image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.17.24
           ports:
             - containerPort: 9200
           volumeMounts:
