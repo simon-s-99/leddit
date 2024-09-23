@@ -6,7 +6,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: elasticsearch-main-service
+  name: elasticsearch-service
 spec:
   type: ClusterIP # targets cluster it is deployed in  
   selector:
@@ -21,10 +21,12 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: elasticsearch-main-pv-claim
+  name: elasticsearch-pv-claim
 spec:
   accessModes:
-    - ReadOnlyMany # node can only be mounted by one pod in read/write mode but multiple times in read-only mode
+    # ReadOnlyMany is very unclear whether or not the storage will be read only or 
+    # if it will be read/write for one pod but read only for all other pods. 
+    - ReadWriteMany # for this reason we choose ReadWriteMany
   resources:
     requests:
       # requests 5GB of storage from PersistentVolume 
@@ -51,10 +53,10 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: elasticsearch-main-pv-claim
+            claimName: elasticsearch-pv-claim
       containers:
         - name: elasticsearch-main
-          image: docker.elastic.co/elasticsearch/elasticsearch:7.17.24
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
           ports:
             - containerPort: 9200
           volumeMounts:
