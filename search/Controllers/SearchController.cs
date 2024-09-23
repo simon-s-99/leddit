@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Search.Models;
+using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute; // avoids ambigous reference error
 
 namespace Search.Controllers
 {
@@ -7,7 +8,7 @@ namespace Search.Controllers
     [Route("api/[controller]")]
     public class SearchController : ControllerBase
     {
-        [HttpGet(Name = "Search")]
+        [HttpGet(Name = "search")]
         public IEnumerable<SearchResult> Get()
         {
             // return Enumerable.ToArray() or something similar 
