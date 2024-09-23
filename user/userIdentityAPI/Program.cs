@@ -54,9 +54,13 @@ namespace userIdentityAPI
             builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false; // Disable email confirmation
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = true;           // Require at least one digit
+                options.Password.RequiredLength = 6;            // Minimum password length
+                options.Password.RequireNonAlphanumeric = false; // Do not require special characters
+                options.Password.RequireUppercase = true;       // Require at least one uppercase letter
+                options.Password.RequireLowercase = true;       // Require at least one lowercase letter
             }).AddEntityFrameworkStores<ApplicationDbContext>();
+
 
             // Add JWT Authentication. Using UTF8 in order to make the key the required amount of bytes for postman (256)
             var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);

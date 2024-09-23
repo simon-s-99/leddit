@@ -77,8 +77,12 @@ namespace UserService.Controllers
             var user = await _userManager.FindByNameAsync(loginUserDto.Username);
             var token = GenerateJwtToken(user);
 
-            return Ok(new { token });
-            //return Ok("User logged in successfully");
+            return Ok(new
+            {
+                message = "User logged in successfully",
+                token
+            });
+
         }
 
         [HttpGet("profile/{username}")]
@@ -133,6 +137,46 @@ namespace UserService.Controllers
             }
 
             return Ok("Profile updated successfully");
+        }
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Get the currently logged-in user
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            // Ensure new password and confirmation match
+            if (changePasswordDto.NewPassword != changePasswordDto.ConfirmPassword)
+            {
+                return BadRequest("Passwords does not match!");
+            }
+
+            if (changePasswordDto.NewPassword == changePasswordDto.CurrentPassword)
+            {
+                return BadRequest("New password cannot be the same as the current password");
+            }
+
+            // Change current password to new password
+            var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors.Select(e => e.Description).ToList());
+            }
+
+            return Ok("Password changed successfully");
         }
 
         private string GenerateJwtToken(ApplicationUser user)
