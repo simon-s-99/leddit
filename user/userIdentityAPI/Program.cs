@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using userIdentityAPI.Data;
 using userIdentityAPI.Services;
 using userIdentityAPI.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace userIdentityAPI
 {
@@ -54,6 +57,28 @@ namespace userIdentityAPI
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 6;
             }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+            // Add JWT Authentication. Using UTF8 in order to make the key the required amount of bytes for postman (256)
+            var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+            });
 
 
             builder.Services.AddControllersWithViews();
