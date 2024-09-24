@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: comments-container
-        image: docker.io/library/comments-image
+        image: addebadde/comments-image
         imagePullPolicy: Always
         ports:
         - containerPort: 80 
