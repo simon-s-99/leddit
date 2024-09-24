@@ -22,10 +22,13 @@ namespace Comments
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddHostedService<MessageService>();
-            builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<MessageService>().First());
+            // builder.Services.AddHostedService<MessageService>();
+            // builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<MessageService>().First());
 
             var app = builder.Build();
+
+            // For docker
+            app.Urls.Add("http://*:80");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
