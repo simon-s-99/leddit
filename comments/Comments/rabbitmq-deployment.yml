@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rabbitmq-deployment
+  name: rabbit-deployment
   labels:
-    app: rabbitmq
+    app: rabbit
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rabbitmq
+      app: rabbit
   template:
     metadata:
       labels:
-        app: rabbitmq
+        app: rabbit
     spec:
       containers:
-        - name: rabbitmq
+        - name: rabbit
           image: rabbitmq
           imagePullPolicy: Always
           ports:
