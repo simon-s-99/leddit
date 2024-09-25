@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: comments-container
-        image: addebadde/comments-image
-        imagePullPolicy: Always
+        image: docker.io/library/comments-image #minikube image load comments-image
+        imagePullPolicy: Never
         ports:
         - containerPort: 80 
