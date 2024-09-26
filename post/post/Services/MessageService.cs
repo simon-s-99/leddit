@@ -11,8 +11,17 @@ namespace post.Services
         private IModel? channel;
 
         public void Connect()
-        { 
-            var connectionFactory = new ConnectionFactory { HostName = "localhost", Port = 5672, UserName = "guest", Password = "guest" };
+        {
+            var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+
+            var connectionFactory = new ConnectionFactory
+            {
+                HostName = isRunningInDocker ? "host.docker.internal" : "localhost",
+                Port = 5672,
+                UserName = "guest",
+                Password = "guest"
+            };
+
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
 
