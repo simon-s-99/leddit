@@ -23,9 +23,15 @@ namespace Search.Controllers
 
             // TODO - implement actual searching here, connection seems to be working 
 
-            // return Enumerable.ToArray() or something similar 
-            SearchResult[] searchResults = []; // <-- remove this later, temporary code 
-            return searchResults; // <-- remove this later, temporary code
+            var query = Request.QueryString;
+            var result = new SearchResult();
+            result.Test = query.ToString();
+
+            List<SearchResult> searchResults = new();
+
+            searchResults.Add(result);
+
+            return searchResults;
         }
     }
 }

@@ -2,6 +2,6 @@ namespace Search.Models
 {
     public class SearchResult
     {
-        public string? EverythingTest { get; set; }
+        public string? Test { get; set; }
     }
 }
