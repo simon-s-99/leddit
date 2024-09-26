@@ -13,10 +13,8 @@ namespace Comments
 
             builder.Services.AddControllers();
 
-            var connectionString = builder.Configuration.GetConnectionString("local") ?? throw new InvalidOperationException("Connection string not found.");
-
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseNpgsql("Host=localhost;Database=comments;Username=postgres;Password=password"));
 
             builder.Services.AddScoped<CommentsService>();
             builder.Services.AddEndpointsApiExplorer();
