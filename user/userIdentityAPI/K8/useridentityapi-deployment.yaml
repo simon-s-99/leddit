@@ -1,0 +1,20 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: useridentityapi-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: useridentityapi
+  template:
+    metadata:
+      labels:
+        app: useridentityapi
+    spec:
+      containers:
+      - name: useridentityapi
+        image: useridentityapi   # Din Docker-image
+        imagePullPolicy: Never   # Vi använder den lokala bilden som laddas till Minikube
+        ports:
+        - containerPort: 8080    # Exponera porten din applikation kör på
