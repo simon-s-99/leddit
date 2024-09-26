@@ -6,10 +6,12 @@ spec:
   selector:
     app: rabbitmq
   ports:
-    - protocol: TCP
-      port: 5672  # Exponerar RabbitMQ:s meddelandeport
+    - name: amqp
+      protocol: TCP
+      port: 5672   # RabbitMQ meddelandehanteringsport
       targetPort: 5672
-    - protocol: TCP
-      port: 15672  # Exponerar Management UI
+    - name: management
+      protocol: TCP
+      port: 15672  # RabbitMQ Management UI-port
       targetPort: 15672
-  type: NodePort # Gör tjänsten tillgänglig på en nodport
+  type: NodePort  # Gör tjänsten tillgänglig via en nodport
