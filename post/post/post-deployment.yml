@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: post
-          image: post:dev
+          image: docker.io/library/post:dev
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
