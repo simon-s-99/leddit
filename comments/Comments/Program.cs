@@ -13,8 +13,10 @@ namespace Comments
 
             builder.Services.AddControllers();
 
+            var connectionString = builder.Configuration.GetConnectionString("kubernetes") ?? throw new InvalidOperationException("Connection string not found.");
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql("Host=host.docker.internal;Port=5432;Database=comments;Username=postgres;Password=password"));
+                options.UseNpgsql(connectionString));
 
             builder.Services.AddScoped<CommentsService>();
             builder.Services.AddEndpointsApiExplorer();

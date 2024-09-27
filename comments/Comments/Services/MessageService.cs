@@ -34,8 +34,9 @@ namespace Comments.Services
 
         public void Connect()
         {
+            Console.WriteLine("TEST!!");
             // Use default username and password to connect
-            var connectionFactory = new ConnectionFactory { HostName = "host.docker.internal", Port = 5672, UserName = "guest", Password = "guest" };
+            var connectionFactory = new ConnectionFactory { HostName = "rabbit-service", Port = 5672, UserName = "guest", Password = "guest" };
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
 
@@ -81,7 +82,7 @@ namespace Comments.Services
         public Task StartAsync(CancellationToken token)
         {
             Connect();
-            ListenForMessages();
+            // ListenForMessages();
             return Task.CompletedTask;
         }
 
