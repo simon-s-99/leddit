@@ -23,7 +23,7 @@ namespace Comments.Services
             };
         }
 
-        // Notifies about certain events regarding comments, exhanges are passed to the method
+        // Notifies about certain events regarding comments, exchanges are passed to the method
         public void NotifyCommentChanged(string exchange, Comment comment)
         {
             var commentJson = JsonSerializer.Serialize(comment);

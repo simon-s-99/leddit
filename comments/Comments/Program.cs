@@ -1,4 +1,5 @@
 
+using System.Net;
 using Comments.Data;
 using Comments.Services;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,6 @@ namespace Comments
             builder.Services.AddControllers();
 
             var connectionString = builder.Configuration.GetConnectionString("kubernetes") ?? throw new InvalidOperationException("Connection string not found.");
-
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(connectionString));
 
