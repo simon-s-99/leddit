@@ -4,6 +4,7 @@ namespace Comments.Models
 {
     public class Comment
     {
+        [Key]
         [Required]
         public Guid Id { get; set; }
 
@@ -21,6 +22,6 @@ namespace Comments.Models
         [Required]
         [MaxLength(500)]
         [Editable(true)]
-        public string Body { get; set; }
+        public string Body { get; set; } = string.Empty;
     }
 }

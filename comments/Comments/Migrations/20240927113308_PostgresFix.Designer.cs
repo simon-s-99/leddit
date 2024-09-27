@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Comments.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240927111751_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240927113308_PostgresFix")]
+    partial class PostgresFix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
