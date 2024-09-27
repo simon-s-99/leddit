@@ -14,7 +14,7 @@ namespace Comments
             builder.Services.AddControllers();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql("Host=localhost;Database=comments;Username=postgres;Password=password"));
+                options.UseNpgsql("Host=host.docker.internal;Port=5432;Database=comments;Username=postgres;Password=password"));
 
             builder.Services.AddScoped<CommentsService>();
             builder.Services.AddEndpointsApiExplorer();

@@ -17,7 +17,7 @@ spec:
         image: postgres
         imagePullPolicy: Always
         ports:
-        - containerPort: 3276
+        - containerPort: 5432
         env:
           - name: POSTGRES_PASSWORD
             value: password
