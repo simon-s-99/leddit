@@ -1,8 +1,8 @@
 ﻿using Comments.Data;
-using Comments.Models;
-using Comments.Models.DTOs;
+using LedditModels;
 using Microsoft.IdentityModel.Tokens;
 using System.Web.Http;
+using Comments.DTOs;
 
 namespace Comments.Services
 {

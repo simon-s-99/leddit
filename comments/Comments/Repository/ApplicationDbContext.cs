@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Comments.Models;
+using LedditModels;
 
 namespace Comments.Data
 {

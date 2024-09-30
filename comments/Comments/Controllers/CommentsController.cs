@@ -1,7 +1,7 @@
-using Comments.Models;
-using Comments.Models.DTOs;
+using LedditModels;
 using Comments.Services;
 using Microsoft.AspNetCore.Mvc;
+using Comments.DTOs;
 
 namespace Comments.Controllers
 {

@@ -10,10 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Migrations\**" />
-    <Content Remove="Data\Migrations\**" />
-    <EmbeddedResource Remove="Data\Migrations\**" />
-    <None Remove="Data\Migrations\**" />
+    <Compile Remove="Repository\Migrations\**" />
+    <Content Remove="Repository\Migrations\**" />
+    <EmbeddedResource Remove="Repository\Migrations\**" />
+    <None Remove="Repository\Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +32,12 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="LedditModels">
+      <HintPath>..\..\LedditModels\bin\Debug\net8.0\LedditModels.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

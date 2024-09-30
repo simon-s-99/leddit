@@ -1,9 +1,9 @@
-﻿using Comments.Models;
-using Comments.Models.DTOs;
+﻿using LedditModels;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
+using Comments.DTOs;
 
 namespace Comments.Services
 {

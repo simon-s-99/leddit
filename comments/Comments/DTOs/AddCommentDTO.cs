@@ -1,7 +1,6 @@
-﻿using Comments.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Comments.Models.DTOs
+namespace Comments.DTOs
 {
     public class AddCommentDTO
     {
@@ -17,5 +16,5 @@ namespace Comments.Models.DTOs
         [MaxLength(500)]
         [Editable(true)]
         public string Body { get; set; } = string.Empty;
-    } 
+    }
 }

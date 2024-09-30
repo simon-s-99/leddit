@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Comments.Models
+namespace LedditModels
 {
     public class Comment
     {
