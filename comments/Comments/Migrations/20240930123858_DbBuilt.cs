@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Comments.Migrations
 {
     /// <inheritdoc />
-    public partial class PostgresFix : Migration
+    public partial class DbBuilt : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

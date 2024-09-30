@@ -12,7 +12,7 @@ namespace Comments.Services
         private IConnection? connection;
         private IModel? channel;
         private IServiceProvider? provider;
-        private HttpClient httpClient;
+        private HttpClient httpClient; // Not finished
 
         public MessageService(IServiceProvider? provider)
         {
@@ -34,7 +34,6 @@ namespace Comments.Services
 
         public void Connect()
         {
-            Console.WriteLine("TEST!!");
             // Use default username and password to connect
             var connectionFactory = new ConnectionFactory { HostName = "rabbit-service", Port = 5672, UserName = "guest", Password = "guest" };
             connection = connectionFactory.CreateConnection();
@@ -46,6 +45,7 @@ namespace Comments.Services
             channel.ExchangeDeclare("edit-comment", ExchangeType.Fanout);
         }
 
+        // Not finished vvvvvv
         public void ListenForMessages()
         {
             channel.ExchangeDeclare("add-comment", ExchangeType.Fanout);

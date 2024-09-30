@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using LedditModels;
 
-namespace Comments.Data
+namespace Comments.Repository
 {
     public class ApplicationDbContext : DbContext
     {

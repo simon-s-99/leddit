@@ -32,4 +32,4 @@ spec:
     - protocol: TCP
       port: 5672
       targetPort: 5672
-  type: ClusterIP
+  type: ClusterIP # Makes sure the service cannot receive external requests

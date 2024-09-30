@@ -1,4 +1,4 @@
-﻿using Comments.Data;
+﻿using Comments.Repository;
 using LedditModels;
 using Microsoft.IdentityModel.Tokens;
 using System.Web.Http;

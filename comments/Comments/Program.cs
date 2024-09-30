@@ -1,6 +1,6 @@
 
 using System.Net;
-using Comments.Data;
+using Comments.Repository;
 using Comments.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,7 +27,7 @@ namespace Comments
 
             var app = builder.Build();
 
-            // For docker
+            // Ensures docker finds the correct port to use
             app.Urls.Add("http://*:80");
 
             // Configure the HTTP request pipeline.
