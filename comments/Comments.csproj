@@ -35,9 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="LedditModels">
-      <HintPath>..\..\LedditModels\bin\Debug\net8.0\LedditModels.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\LedditModels\LedditModels.csproj" />
   </ItemGroup>
 
 </Project>
