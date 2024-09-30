@@ -37,6 +37,8 @@ namespace UserService.Controllers
             {
                 UserName = registerUserDto.Username,
                 Email = registerUserDto.Email,
+                DisplayName = registerUserDto.Username, // Default DisplayName is the same as the Username
+                Karma = 0
             };
 
             // Use CreateAsync to hash the password and save the user
@@ -109,7 +111,8 @@ namespace UserService.Controllers
                 DisplayName = user.DisplayName,
                 ProfilePictureUrl = user.ProfilePictureUrl,
                 Bio = user.Bio,
-                DateOfBirth = user.DateOfBirth
+                DateOfBirth = user.DateOfBirth,
+                Karma = user.Karma
             };
 
             return Ok(profile);

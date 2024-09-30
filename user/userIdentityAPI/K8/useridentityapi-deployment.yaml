@@ -15,6 +15,6 @@ spec:
       containers:
       - name: useridentityapi
         image: userimage
-        imagePullPolicy: Never   # Vi använder den lokala bilden som laddas till Minikube
+        imagePullPolicy: Never   
         ports:
-        - containerPort: 8080    # Exponera porten din applikation kör på
+        - containerPort: 8080
