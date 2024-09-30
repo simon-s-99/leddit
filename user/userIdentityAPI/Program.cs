@@ -7,6 +7,7 @@ using userIdentityAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+
 namespace userIdentityAPI
 {
     public class Program
@@ -33,14 +34,7 @@ namespace userIdentityAPI
             //using var reader = new StreamReader(response.Content.ReadAsStream());
             //var json = reader.ReadToEnd();
             //Console.WriteLine(json);
-
-
-            //// Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
-            //    app.UseSwagger();
-            //    app.UseSwaggerUI();
-            //}
+         
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -114,7 +108,26 @@ namespace userIdentityAPI
                 app.UseHsts();
             }
 
+            builder.Services.AddEndpointsApiExplorer();
+
             app.UseHttpsRedirection();
+
+            app.MapGet(
+                "/user/{id}",
+                (int id) =>
+                {
+                    var user = new
+                    {
+                        Id = id,
+                        Name = "John Doe",
+                        Email = "john.doe@example.com"
+                    };
+                    return Results.Ok(user);
+                }
+            )
+            .WithName("GetUser");
+
+
             app.UseStaticFiles();
 
             app.UseRouting();
