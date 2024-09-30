@@ -34,4 +34,10 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="LedditModels">
+      <HintPath>..\..\LedditModels\bin\Debug\net8.0\LedditModels.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
