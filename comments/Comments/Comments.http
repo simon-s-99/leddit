@@ -1,6 +1,0 @@
-@Comments_HostAddress = http://localhost:5199
-
-GET {{Comments_HostAddress}}/comments/
-Accept: application/json
-
-###

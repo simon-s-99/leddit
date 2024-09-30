@@ -34,12 +34,6 @@ namespace Comments.Services
                 Body = comment.Body,
             };
 
-            if (newComment.ReplyTo is not null)
-            {
-                // If reply id is not null but the reply itself is null, throw an HTTP exception
-                var reply = _context.Comments.Where(c => c.Id == newComment.Id).FirstOrDefault() ?? throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
-            }
-
             _context.Comments.Add(newComment);
             _context.SaveChanges();
 
