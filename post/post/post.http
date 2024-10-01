@@ -1,6 +1,6 @@
 @post_HostAddress = http://localhost:5255
 
-GET {{post_HostAddress}}/weatherforecast/
+GET {{post_HostAddress}}
 Accept: application/json
 
 ###
