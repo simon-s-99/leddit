@@ -2,7 +2,7 @@
 
 namespace LedditModels
 {
-    class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser
     {
         public string? DisplayName { get; set; }
         public int Karma { get; set; }
