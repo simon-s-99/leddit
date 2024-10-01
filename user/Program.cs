@@ -6,6 +6,7 @@ using userIdentityAPI.Services;
 using userIdentityAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using LedditModels;
 
 namespace userIdentityAPI
 {

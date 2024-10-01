@@ -8,6 +8,7 @@ using userIdentityAPI.DTOs;
 using userIdentityAPI.Models;
 using userIdentityAPI.Services;
 using UserService.DTOs;
+using LedditModels;
 
 namespace UserService.Controllers
 {
