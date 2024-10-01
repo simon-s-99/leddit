@@ -25,6 +25,13 @@ spec:
             value: password
           - name: POSTGRES_USER
             value: postgres
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-pv
+      volumes: #Register volume and volume claim
+      - name: postgres-pv
+        persistentVolumeClaim:
+          claimName: postgres-pvc
 ---
 apiVersion: v1
 kind: Service
