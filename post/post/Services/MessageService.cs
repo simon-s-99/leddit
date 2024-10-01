@@ -12,11 +12,9 @@ namespace post.Services
 
         public void Connect()
         {
-            var isRunningInDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
-
             var connectionFactory = new ConnectionFactory
             {
-                HostName = isRunningInDocker ? "host.docker.internal" : "localhost",
+                HostName = "localhost",
                 Port = 5672,
                 UserName = "guest",
                 Password = "guest"
