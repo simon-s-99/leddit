@@ -9,7 +9,7 @@ spec:
   - matches:
     - path:
         type: PathPrefix
-        value: /api/search
+        value: /search
     backendRefs:
-    - name: searchnamegoesheeeeeeeeere
-      port: 8099
+    - name: elasticsearch-svc
+      port: 9200
