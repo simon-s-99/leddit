@@ -1,0 +1,75 @@
+# This file creates a service that targets the elasticsearch pod it creates.
+# The pod itself references a PersistentVolumeClaim to provision/claim a certain amount
+# of storage for the pods elasticsearch container.
+# -
+# Elasticsearch Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-service
+spec:
+  type: ClusterIP # targets cluster it is deployed in  
+  selector:
+    component: elasticsearch-main # service targets components with this label in the cluster 
+  ports:
+  - port: 9200
+    targetPort: 9200
+
+---
+
+# Elasticsearch PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-pv-claim
+spec:
+  accessModes:
+    # ReadOnlyMany is very unclear whether or not the storage will be read only or 
+    # if it will be read/write for one pod but read only for all other pods. 
+    - ReadWriteMany # for this reason we choose ReadWriteMany
+  resources:
+    requests:
+      # requests 5GB of storage from PersistentVolume 
+      # (or dynamically creates it based on dynamic provisioning settings)
+      storage: 5Gi 
+
+---
+
+# Elasticsearch Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-main
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: elasticsearch-main
+  template:
+    metadata:
+      labels:
+        component: elasticsearch-main
+    spec:
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: elasticsearch-pv-claim
+      containers:
+        - name: elasticsearch-main
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.17.24
+          ports:
+            - containerPort: 9200
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+          env:
+            - name: ELASTIC_PASSWORD
+              value: 'dev' # obviously change this for a production deployment 
+            - name: discovery.type
+              value: single-node
+            - name: bootstrap.memory_lock # tells elasticsearch to not switch from RAM to disk storage 
+              value: 'true'
+            - name: ES_JAVA_OPTS # caps RAM usage at 2GB 
+              value: '-server -Xss1024K -Xmx2G'
+            - name: TAKE_FILE_OWNERSHIP # ensures correct file ownership handling with persistent volumes 
+              value: 'true'
