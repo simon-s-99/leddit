@@ -15,7 +15,7 @@ namespace userIdentityAPI.Services
             // Configure the RabbitMQ connection factory
             _connectionFactory = new ConnectionFactory
             {
-                HostName = "localhost",
+                HostName = "rabbitmq-service",
                 Port = 5672,
                 UserName = "guest",
                 Password = "guest"
