@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 var connectionString = builder.Configuration.GetConnectionString("kubernetes") ?? throw new InvalidOperationException("Connection string 'local' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<PostService>();
 builder.Services.AddEndpointsApiExplorer();
