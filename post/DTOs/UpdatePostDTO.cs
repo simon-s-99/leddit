@@ -1,4 +1,4 @@
-﻿namespace post.Models.DTOs
+﻿namespace post.DTOs
 {
     public class UpdatePostDTO
     {

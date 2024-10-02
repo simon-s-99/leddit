@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using post.Models;
+using LedditModels;
 
 namespace post.Data
 {

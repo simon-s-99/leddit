@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using post.Models;
-using post.Models.DTOs;
+using LedditModels;
 using post.Data;
 using post.Services;
+using post.DTOs;
 
 namespace post.Controllers
 {

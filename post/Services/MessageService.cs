@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using RabbitMQ.Client;
 using System.Text.Json;
-using post.Models;
+using LedditModels;
 
 namespace post.Services
 {
