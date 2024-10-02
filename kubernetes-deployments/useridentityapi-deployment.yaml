@@ -2,6 +2,8 @@
 kind: Deployment
 metadata:
   name: useridentityapi-deployment
+  labels:
+    app: useridentityapi # Add label here
 spec:
   replicas: 3
   selector:
@@ -10,11 +12,11 @@ spec:
   template:
     metadata:
       labels:
-        app: useridentityapi
+        app: useridentityapi # Consistent label here as well
     spec:
       containers:
-      - name: useridentityapi
-        image: userimage
-        imagePullPolicy: Never   
-        ports:
-        - containerPort: 8080
+        - name: useridentityapi
+          image: docker.io/discosam/userimage:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080

@@ -120,32 +120,15 @@ namespace userIdentityAPI
                 app.UseSwaggerUI();
             }
 
-            // Map minimal API with OpenAPI
-            //app.MapGet(
-            //    "/user/{id}",
-            //    (int id) =>
-            //    {
-            //        var user = new
-            //        {
-            //            Id = 1,
-            //            Name = "John Doe",
-            //            Email = "john.doe@example.com"
-            //        };
-            //        return Results.Ok(user);
-            //    }
-            //)
-            //.WithName("GetUser")
-            //.WithOpenApi();
-
-            app.MapGet(
-        "/user",
-        () =>
-        {
-            return "Hello from user!";
-        }
-    )
-    .WithName("User")
-    .WithOpenApi();
+            //         app.MapGet(
+            //     "/user",
+            //     () =>
+            //     {
+            //         return "Hello from user!";
+            //     }
+            // )
+            // .WithName("User")
+            // .WithOpenApi();
 
             app.UseStaticFiles();
             app.UseRouting();
