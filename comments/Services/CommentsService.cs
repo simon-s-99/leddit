@@ -27,12 +27,15 @@ namespace Comments.Services
 
             Comment newComment = new Comment
             {
-                //AuthorId = comment.AuthorId,
-                //PostId = comment.PostId,
+                AuthorId = comment.AuthorId,
+                PostId = comment.PostId,
                 ReplyTo = comment.ReplyTo ?? null, // If reply exists, add it, otherwise send null
                 DateCreated = DateTime.UtcNow,
                 Body = comment.Body,
             };
+
+            // Get post the comment was posted on, if it is null, throw an exception
+            var commentPost = _messageService.GetPost(newComment.PostId) ?? throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
 
             _context.Comments.Add(newComment);
             _context.SaveChanges();

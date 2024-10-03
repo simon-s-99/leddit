@@ -25,6 +25,7 @@ namespace Comments
             builder.Services.AddHostedService<MessageService>();
             builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<MessageService>().First());
 
+            builder.Services.AddHttpClient();
             var app = builder.Build();
 
             // Ensures docker finds the correct port to use

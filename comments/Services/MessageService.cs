@@ -19,7 +19,7 @@ namespace Comments.Services
             this.provider = provider;
             this.httpClient = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:5199")
+                BaseAddress = new Uri("http://post-service")
             };
         }
 
@@ -44,45 +44,10 @@ namespace Comments.Services
             channel.ExchangeDeclare("delete-comment", ExchangeType.Fanout);
             channel.ExchangeDeclare("edit-comment", ExchangeType.Fanout);
         }
-
-        // Not finished vvvvvv
-        public void ListenForMessages()
-        {
-            channel.ExchangeDeclare("add-comment", ExchangeType.Fanout);
-            var queue = channel.QueueDeclare("comment", true, false, false);
-            channel.QueueBind(queue, "add-comment", string.Empty);
-
-            var consumer = new EventingBasicConsumer(channel);
-
-            consumer.Received += (model, ea) =>
-            {
-                var body = ea.Body.ToArray();
-                var json = Encoding.UTF8.GetString(body);
-
-                try
-                {
-                    var comment = JsonSerializer.Deserialize<AddCommentDTO>(json);
-                    Console.WriteLine("Created comment " + comment.Body);
-
-                    using (var scope = provider.CreateScope())
-                    {
-                        var commentsService = scope.ServiceProvider.GetRequiredService<CommentsService>();
-                        commentsService.AddComment(comment);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                }
-            };
-
-            channel.BasicConsume(queue, true, consumer);
-        }
-
         public Task StartAsync(CancellationToken token)
         {
             Connect();
-            // ListenForMessages();
+            ListenForMessages();
             return Task.CompletedTask;
         }
 
@@ -93,5 +58,62 @@ namespace Comments.Services
 
             return Task.CompletedTask;
         }
+
+       private void ListenForMessages()
+        {
+            channel.ExchangeDeclare("add-post", ExchangeType.Fanout);
+            var queue = channel.QueueDeclare("post", true, false, false);
+            channel.QueueBind(queue, "add-post", string.Empty);
+
+            var consumer = new EventingBasicConsumer(channel);
+
+            consumer.Received += (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var json = Encoding.UTF8.GetString(body);
+
+                try
+                {
+                    var post = JsonSerializer.Deserialize<Post>(json);
+                    Console.WriteLine("Post created " + post.Content);
+
+                    // using (var scope = provider.CreateScope())
+                    // {
+                    //     var commentsService = scope.ServiceProvider.GetRequiredService<CommentsService>();
+                    //     commentsService.AddComment(comment);
+                    // }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            };
+
+            channel.BasicConsume(queue, true, consumer);
+        }
+
+        public Post? GetPost(Guid id)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/posts?id=" + id);
+            var response = httpClient.Send(request);
+
+            using var reader = new StreamReader(response.Content.ReadAsStream());
+            var json = reader.ReadToEnd();
+
+            try
+            {
+                var post = JsonSerializer.Deserialize<Post>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                Console.WriteLine(post.Title);
+
+                return post;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return null;
+        }
+
     }
 }

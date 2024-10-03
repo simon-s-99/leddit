@@ -28,6 +28,9 @@ namespace Comments.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -35,6 +38,9 @@ namespace Comments.Migrations
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ReplyTo")
                         .HasColumnType("uuid");

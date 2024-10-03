@@ -4,11 +4,11 @@ namespace Comments.DTOs
 {
     public class AddCommentDTO
     {
-        //[Required]
-        //public Guid AuthorId { get; set; }
+        [Required]
+        public Guid AuthorId { get; set; }
 
-        //[Required]
-        //public Guid PostId { get; set; }
+        [Required]
+        public Guid PostId { get; set; }
 
         public Guid? ReplyTo { get; set; }
 
