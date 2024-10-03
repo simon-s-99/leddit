@@ -33,7 +33,7 @@ namespace post.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdatePost(Guid id, [FromBody] UpdatePostDTO dto)
+        public async Task<IActionResult> UpdatePost([FromQuery] Guid id, [FromBody] UpdatePostDTO dto)
         {
             try
             {
@@ -46,8 +46,8 @@ namespace post.Controllers
             }
         }
 
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetPost(Guid id)
+        [HttpGet]
+        public async Task<IActionResult> GetPost([FromQuery] Guid id)
         {
             try
             {

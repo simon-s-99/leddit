@@ -19,7 +19,7 @@ namespace Comments.Services
             this.provider = provider;
             this.httpClient = new HttpClient
             {
-                BaseAddress = new Uri("http://post-service")
+                BaseAddress = new Uri("http://post-service:8080")
             };
         }
 
@@ -99,6 +99,8 @@ namespace Comments.Services
 
             using var reader = new StreamReader(response.Content.ReadAsStream());
             var json = reader.ReadToEnd();
+
+            Console.WriteLine("req: " + request + " res:" + response);
 
             try
             {
