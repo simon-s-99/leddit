@@ -4,6 +4,7 @@ using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 using Comments.DTOs;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Comments.Services
 {
@@ -47,7 +48,7 @@ namespace Comments.Services
         public Task StartAsync(CancellationToken token)
         {
             Connect();
-            ListenForMessages();
+            // ListenForMessages();
             return Task.CompletedTask;
         }
 
@@ -94,19 +95,24 @@ namespace Comments.Services
 
         public Post? GetPost(Guid id)
         {
+            // Send request to post-service
             var request = new HttpRequestMessage(HttpMethod.Get, "api/posts?id=" + id);
             var response = httpClient.Send(request);
 
+            // If response is 404, return null
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            // Otherwise read the response
             using var reader = new StreamReader(response.Content.ReadAsStream());
             var json = reader.ReadToEnd();
 
-            Console.WriteLine("req: " + request + " res:" + response);
-
             try
             {
+                // Read the json and return the post object
                 var post = JsonSerializer.Deserialize<Post>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                Console.WriteLine(post.Title);
-
                 return post;
             }
             catch (Exception e)
@@ -116,6 +122,5 @@ namespace Comments.Services
 
             return null;
         }
-
     }
 }

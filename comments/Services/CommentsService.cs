@@ -37,8 +37,6 @@ namespace Comments.Services
             // Get post the comment was posted on, if it is null, throw an exception
             Post? commentPost = _messageService.GetPost(newComment.PostId);
 
-            Console.WriteLine(commentPost);
-
             if (commentPost is null)
             {
                 throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
