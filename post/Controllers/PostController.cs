@@ -45,6 +45,20 @@ namespace post.Controllers
                 return BadRequest(new { Error = ex.Message });
             }
         }
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetPost(Guid id)
+        {
+            try
+            {
+                var post = await _postService.GetPostAsync(id);
+                return Ok(post);
+            }
+            catch (System.Exception ex)
+            {
+                return NotFound(new { Error = ex.Message });
+            }
+        }
     }
 }
 

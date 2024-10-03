@@ -45,6 +45,16 @@ namespace post.Services
             await _context.SaveChangesAsync();
             _messageService.NotifyPostChanged("update-post", post);
         }
+
+        public async Task<Post> GetPostAsync(Guid id)
+        {
+            var post = await _context.Posts.FindAsync(id);
+            if (post == null)
+        {
+            throw new System.Exception("Post not found.");
+        }
+            return post;
+        }
     }
 }
 
