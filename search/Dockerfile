@@ -4,7 +4,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
 # Expose the port the API will listen on
-EXPOSE 9200
+#EXPOSE 9201
+EXPOSE 9201/tcp
 
 COPY . ./
 COPY ["search/", "Search/"]
