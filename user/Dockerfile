@@ -1,25 +1,34 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
+# Use the .NET SDK image to build the app
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
+
+# Copy both csproj files for dependency resolution
+COPY . ./
+COPY ["user/userIdentityAPI.csproj", "user/"]
+COPY ["LedditModels/LedditModels.csproj", "LedditModels/"]
+
+# Clean obj and bin folders to avoid conflicts
+#RUN rm -rf /src/user/obj /src/user/bin
+#RUN rm -rf /src/LedditModels/obj /src/LedditModels/bin
+
+# Restore dependencies for both projects
+RUN dotnet restore "user/userIdentityAPI.csproj"
+RUN dotnet restore "LedditModels/LedditModels.csproj"
+
+
+# Build the userIdentityAPI project
+#RUN dotnet build "userIdentityAPI.csproj" -c Release -o /app/build
+
+# Publish the app
+FROM build-env AS publish
+RUN dotnet publish "user/userIdentityAPI.csproj" -c Release -o /app/out
+
+# Set up the runtime image
+# Use the ASP.NET Core runtime image for running the app
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 EXPOSE 8080
 EXPOSE 8081
+COPY --from=publish /app/out .
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["userIdentityAPI.csproj", "."]
-RUN dotnet restore "./userIdentityAPI.csproj"
-COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./userIdentityAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./userIdentityAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+#WORKDIR /app/out
 ENTRYPOINT ["dotnet", "userIdentityAPI.dll"]
