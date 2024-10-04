@@ -27,4 +27,5 @@ RUN dotnet publish "Search.csproj" -c Release -o /app/out
 #WORKDIR /app
 #COPY --from=build-env /app/out .
 
+WORKDIR /app/out
 ENTRYPOINT ["dotnet", "Search.dll"]
