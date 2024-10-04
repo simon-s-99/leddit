@@ -1,32 +1,29 @@
-# Set .net 8.0 as base image
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
-
+# set asp.net 8.0 as base image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-
-# Expose the port the API will listen on
-#EXPOSE 9201
 EXPOSE 9201/tcp
+EXPOSE 9301/tcp
 
-COPY . ./
+# Set .net 8.0 as build image
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /src
+# if main is not found this v is the problem
 COPY ["search/", "Search/"]
 COPY ["LedditModels/LedditModels.csproj", "LedditModels/"]
-
-# Dockerfile does not find Main() during build
-# if this vVv line is not present 
-#COPY ["search/Program.cs", "Search/Program.cs"]
-
 RUN dotnet restore "Search/Search.csproj"
-#RUN dotnet restore "LedditModels/LedditModels.csproj"
+COPY . .
+
+WORKDIR /src/Search
+RUN dotnet build "Search.csproj" -c Release -o /app
 
 FROM build-env AS publish
-WORKDIR /app/Search
-RUN dotnet publish "Search.csproj" -c Release -o /app/out
+WORKDIR /src/Search
+RUN dotnet publish "Search.csproj" -c Release -o /app
 
-# Build the runtime image
-#FROM mcr.microsoft.com/dotnet/aspnet:8.0
-#FROM build-env AS final
-#WORKDIR /app
-#COPY --from=build-env /app/out .
+# AS final is unnecessary & purely semantic
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
 
-WORKDIR /app/out
+WORKDIR /app
 ENTRYPOINT ["dotnet", "Search.dll"]
