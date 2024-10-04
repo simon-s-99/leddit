@@ -10,7 +10,8 @@ namespace Search
             var builder = WebApplication.CreateBuilder(args);
 
             // add elastisearchclient connection settings as a singleton
-            // this is recommended in elasticsearchs documentation 
+            // this is recommended in elasticsearchs documentation & makes sense
+            // since elasticsearch indexes based on connectionsettings 
             builder.Services.AddSingleton<IElasticsearchClientSettings, ElasticsearchClientSettings>(sp =>
             {
                 string elasticConnString = "http://127.0.0.1:9200";
@@ -25,10 +26,12 @@ namespace Search
 
             var app = builder.Build();
 
+            app.Urls.Add("http://*:9201");
+            app.Urls.Add("http://*:9301");
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

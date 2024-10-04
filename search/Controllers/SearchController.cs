@@ -10,18 +10,19 @@ namespace Search.Controllers
     [Route("api/[controller]")]
     public class SearchController : ControllerBase
     {
-        private readonly ElasticsearchClientSettings _elasticsearchClientSettings;
+        private readonly IElasticsearchClientSettings _elasticsearchClientSettings;
 
-        public SearchController(ElasticsearchClientSettings elasticsearchClientSettings)
+        public SearchController(IElasticsearchClientSettings elasticsearchClientSettings)
         {
             _elasticsearchClientSettings = elasticsearchClientSettings;
         }
 
         [HttpGet(Name = "search")]
-        public IEnumerable<SearchResult> Get([FromQuery] string searchTerm)
+        public List<SearchResult> Get([FromQuery] string searchTerm)
         {
             // runs search logic & returns searchresults 
-            IEnumerable<SearchResult> searchResults = SearchService.Search(_elasticsearchClientSettings, searchTerm);
+            List<SearchResult> searchResults =
+                SearchService.SearchAsync(_elasticsearchClientSettings, searchTerm).Result;
 
             return searchResults;
         }
