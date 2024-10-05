@@ -18,9 +18,8 @@ namespace Search.Controllers
         }
 
         [HttpGet(Name = "search")]
-        public List<SearchResult> Get([FromQuery] string q)
+        public List<SearchResult> Get([FromQuery(Name = "q")] string searchTerm)
         {
-            string searchTerm = q;
             // runs search logic & returns searchresults 
             List<SearchResult> searchResults =
                 SearchService.SearchAsync(_elasticsearchClientSettings, searchTerm).Result;
