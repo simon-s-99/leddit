@@ -1,5 +1,6 @@
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
+using LedditModels;
 
 namespace Search
 {
@@ -18,6 +19,9 @@ namespace Search
                 string elasticUsername = "elastic";
                 string elasticPassword = "dev"; // change this in an actual production environment 
                 var elasticSettings = new ElasticsearchClientSettings(new Uri(elasticConnString))
+                    .DefaultMappingFor<ApplicationUser>(m => m.IndexName("users"))
+                    .DefaultMappingFor<Post>(m => m.IndexName("posts"))
+                    .DefaultMappingFor<Comment>(m => m.IndexName("comments"))
                     .Authentication(new BasicAuthentication(elasticUsername, elasticPassword))
                     .EnableDebugMode();
                 return elasticSettings;
@@ -28,7 +32,6 @@ namespace Search
             var app = builder.Build();
 
             app.Urls.Add("http://*:9201");
-            app.Urls.Add("http://*:9301");
 
             app.UseHttpsRedirection();
 
