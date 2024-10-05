@@ -1,8 +1,6 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using LedditModels;
 using Search.Models;
-using System.Collections;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Search.Services
 {
@@ -24,16 +22,25 @@ namespace Search.Services
             // ElasticClient is thread-safe and does not implement IDispose
             var client = new ElasticsearchClient(elasticsearchClientSettings);
 
-            var commentSearchResponse = await client.SearchAsync<Comment>(s => s
-                .Index("comment-index") // index to query
-                .From(0)
-                .Size(5)
-                .Query(q => q
-                    .Term(t => t.Field("Body").Value("hi")) // searchTerm
-                )
-            );
+            //var commentSearchResponse = await client.SearchAsync<Comment>(s => s
+            //    .Index("comment-index") // index to query
+            //    .From(0)
+            //    .Size(5)
+            //    .Query(q => q
+            //        .Term(t => t.Field(f => f.Body) // specifies querying against Comment.Body field
+            //        .Value(searchTerm)) // searchTerm
+            //    )
+            //);
+
+            var commentSearchResponse = await client.SearchAsync<Comment>();
 
             List<SearchResult> results = new();
+
+            Console.WriteLine("----------CONSOLE WRITELINE HERE ================");
+            Console.WriteLine();
+            Console.WriteLine(commentSearchResponse.DebugInformation);
+            Console.WriteLine();
+            Console.WriteLine("====================== CW ends here ---------------");
 
             if (commentSearchResponse.IsValidResponse)
             {

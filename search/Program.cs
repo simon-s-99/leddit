@@ -14,11 +14,12 @@ namespace Search
             // since elasticsearch indexes based on connectionsettings 
             builder.Services.AddSingleton<IElasticsearchClientSettings, ElasticsearchClientSettings>(sp =>
             {
-                string elasticConnString = "http://127.0.0.1:9200";
+                string elasticConnString = "http://172.18.0.2:9200"; //"http://127.0.0.1:9200";
                 string elasticUsername = "elastic";
                 string elasticPassword = "dev"; // change this in an actual production environment 
                 var elasticSettings = new ElasticsearchClientSettings(new Uri(elasticConnString))
-                    .Authentication(new BasicAuthentication(elasticUsername, elasticPassword));
+                    .Authentication(new BasicAuthentication(elasticUsername, elasticPassword))
+                    .EnableDebugMode();
                 return elasticSettings;
             });
 
