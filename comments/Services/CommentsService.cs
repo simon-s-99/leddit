@@ -79,5 +79,12 @@ namespace Comments.Services
 
             return commentToUpdate;
         }
+
+        public List<Comment> GetCommentsFromPostId(Guid id)
+        {
+            List<Comment> postComments = _context.Comments.Where(c =>c.PostId == id).ToList();
+            return postComments;
+        }
     }
+    
 }

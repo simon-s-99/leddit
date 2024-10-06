@@ -12,7 +12,7 @@ namespace Comments.Services
         private IConnection? connection;
         private IModel? channel;
         private IServiceProvider? provider;
-        private HttpClient httpClient; // Not finished
+        private HttpClient httpClient;
 
         public MessageService(IServiceProvider? provider)
         {
@@ -82,7 +82,7 @@ namespace Comments.Services
         public Task StartAsync(CancellationToken token)
         {
             Connect();
-            // ListenForMessages();
+            ListenForMessages();
             return Task.CompletedTask;
         }
 
@@ -92,6 +92,84 @@ namespace Comments.Services
             connection?.Close();
 
             return Task.CompletedTask;
+        }
+
+        private void ListenForMessages()
+        {
+            channel.ExchangeDeclare("delete-post", ExchangeType.Fanout);
+            var queue = channel.QueueDeclare("post", true, false, false);
+            channel.QueueBind(queue, "delete-post", string.Empty);
+
+            var consumer = new EventingBasicConsumer(channel);
+
+            consumer.Received += (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var json = Encoding.UTF8.GetString(body);
+
+                try
+                {
+                    // Get the post object
+                    var post = JsonSerializer.Deserialize<Post>(json);
+
+                    // Create scope for CommentsService
+                    using (var scope = provider.CreateScope())
+                    {
+                        var commentsService = scope.ServiceProvider.GetService<CommentsService>();
+
+                        // Get all comments from the now deleted post
+                        List<Comment> commentsToDelete = commentsService.GetCommentsFromPostId(post.Id);
+
+                        // If post had no comments, return
+                        if (commentsToDelete.Count == 0)
+                        {
+                            return;
+                        }
+
+                        // Otherwise delete them all
+                        foreach (Comment comment in commentsToDelete)
+                        {
+                            commentsService.DeleteComment(comment.Id);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            };
+
+            channel.BasicConsume(queue, true, consumer);
+        }
+
+        public Post? GetPost(Guid id)
+        {
+            // Send request to post-service
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/posts?id=" + id);
+            var response = httpClient.Send(request);
+
+            // If response is 404, return null
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            // Otherwise read the response
+            using var reader = new StreamReader(response.Content.ReadAsStream());
+            var json = reader.ReadToEnd();
+
+            try
+            {
+                // Read the json and return the post object
+                var post = JsonSerializer.Deserialize<Post>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return post;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return null;
         }
     }
 }

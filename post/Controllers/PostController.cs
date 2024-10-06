@@ -46,8 +46,8 @@ namespace post.Controllers
             }
         }
 
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeletePost(Guid id)
+        [HttpDelete]
+        public async Task<IActionResult> DeletePost([FromQuery] Guid id)
         {
             try
             {
