@@ -24,7 +24,7 @@ namespace post.Controllers
             try
             {
                 var postId = await _postService.CreatePostAsync(dto);
-                return Ok(new { Id = postId });
+                return StatusCode(201, new { Id = postId });
             }
             catch (System.Exception ex)
             {
