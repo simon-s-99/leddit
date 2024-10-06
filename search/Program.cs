@@ -1,5 +1,6 @@
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
+using LedditModels;
 
 namespace Search
 {
@@ -9,38 +10,32 @@ namespace Search
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             // add elastisearchclient connection settings as a singleton
-            // this is recommended in elasticsearchs documentation 
+            // this is recommended in elasticsearchs documentation & makes sense
+            // since elasticsearch indexes based on connectionsettings 
             builder.Services.AddSingleton<IElasticsearchClientSettings, ElasticsearchClientSettings>(sp =>
             {
-                string elasticConnString = "http://127.0.0.1:9200";
+                string elasticConnString = "http://172.18.0.2:9200"; //"http://127.0.0.1:9200";
                 string elasticUsername = "elastic";
-                string elasticPassword = "dev";
+                string elasticPassword = "dev"; // change this in an actual production environment 
                 var elasticSettings = new ElasticsearchClientSettings(new Uri(elasticConnString))
-                    .Authentication(new BasicAuthentication(elasticUsername, elasticPassword));
+                    .DefaultMappingFor<ApplicationUser>(m => m.IndexName("users"))
+                    .DefaultMappingFor<Post>(m => m.IndexName("posts"))
+                    .DefaultMappingFor<Comment>(m => m.IndexName("comments"))
+                    .Authentication(new BasicAuthentication(elasticUsername, elasticPassword))
+                    .EnableDebugMode();
                 return elasticSettings;
             });
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer(); // swagger related? Remove?
-            builder.Services.AddSwaggerGen(); // swagger related? Remove?
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            // if (app.Environment.IsDevelopment())
-            // {
-            //     app.UseSwagger();
-            //     app.UseSwaggerUI();
-            // }
+            app.Urls.Add("http://*:9201");
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
