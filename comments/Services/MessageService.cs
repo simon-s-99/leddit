@@ -13,7 +13,7 @@ namespace Comments.Services
         private IConnection? connection;
         private IModel? channel;
         private IServiceProvider? provider;
-        private HttpClient httpClient; // Not finished
+        private HttpClient httpClient;
 
         public MessageService(IServiceProvider? provider)
         {
@@ -48,7 +48,7 @@ namespace Comments.Services
         public Task StartAsync(CancellationToken token)
         {
             Connect();
-            // ListenForMessages();
+            ListenForMessages();
             return Task.CompletedTask;
         }
 
@@ -60,11 +60,11 @@ namespace Comments.Services
             return Task.CompletedTask;
         }
 
-       private void ListenForMessages()
+        private void ListenForMessages()
         {
-            channel.ExchangeDeclare("add-post", ExchangeType.Fanout);
+            channel.ExchangeDeclare("delete-post", ExchangeType.Fanout);
             var queue = channel.QueueDeclare("post", true, false, false);
-            channel.QueueBind(queue, "add-post", string.Empty);
+            channel.QueueBind(queue, "delete-post", string.Empty);
 
             var consumer = new EventingBasicConsumer(channel);
 
@@ -75,18 +75,33 @@ namespace Comments.Services
 
                 try
                 {
+                    // Get the post object
                     var post = JsonSerializer.Deserialize<Post>(json);
-                    Console.WriteLine("Post created " + post.Content);
 
-                    // using (var scope = provider.CreateScope())
-                    // {
-                    //     var commentsService = scope.ServiceProvider.GetRequiredService<CommentsService>();
-                    //     commentsService.AddComment(comment);
-                    // }
+                    // Create scope for CommentsService
+                    using (var scope = provider.CreateScope())
+                    {
+                        var commentsService = scope.ServiceProvider.GetService<CommentsService>();
+
+                        // Get all comments from the now deleted post
+                        List<Comment> commentsToDelete = commentsService.GetCommentsFromPostId(post.Id);
+
+                        // If post had no comments, return
+                        if (commentsToDelete.Count == 0)
+                        {
+                            return;
+                        }
+
+                        // Otherwise delete them all
+                        foreach (Comment comment in commentsToDelete)
+                        {
+                            commentsService.DeleteComment(comment.Id);
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.ToString());
+                    Console.WriteLine(e);
                 }
             };
 
