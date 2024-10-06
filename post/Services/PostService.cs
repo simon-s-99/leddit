@@ -19,7 +19,7 @@ namespace post.Services
         public async Task<Guid> CreatePostAsync(CreatePostDTO dto)
         {
             var post = new Post
-            {   
+            {
                 Title = dto.Title,
                 Content = dto.Content,
                 UserId = dto.UserId
@@ -45,6 +45,20 @@ namespace post.Services
             await _context.SaveChangesAsync();
             _messageService.NotifyPostChanged("update-post", post);
         }
+
+        public async Task DeletePostAsync(Guid id)
+        {
+            var post = await _context.Posts.FindAsync(id);
+            if (post == null)
+            {
+                throw new System.Exception("Post not found.");
+            }
+
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
+            _messageService.NotifyPostChanged("delete-post", post);
+        }
+
 
         public async Task<Post> GetPostAsync(Guid id)
         {

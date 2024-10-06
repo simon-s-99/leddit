@@ -24,7 +24,7 @@ namespace post.Controllers
             try
             {
                 var postId = await _postService.CreatePostAsync(dto);
-                return Ok(new { Id = postId });
+                return StatusCode(201, new { Id = postId });
             }
             catch (System.Exception ex)
             {
@@ -39,6 +39,20 @@ namespace post.Controllers
             {
                 await _postService.UpdatePostAsync(id, dto);
                 return NoContent();
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeletePost(Guid id)
+        {
+            try
+            {
+                await _postService.DeletePostAsync(id);
+                return NoContent();  
             }
             catch (System.Exception ex)
             {

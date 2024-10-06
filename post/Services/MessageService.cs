@@ -25,6 +25,7 @@ namespace post.Services
 
             channel.ExchangeDeclare("add-post", ExchangeType.Fanout);
             channel.ExchangeDeclare("update-post", ExchangeType.Fanout);
+            channel.ExchangeDeclare("delete-post", ExchangeType.Fanout);
         }
 
         public void NotifyPostChanged(string exchange, Post post)
