@@ -46,6 +46,20 @@ namespace post.Controllers
             }
         }
 
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeletePost(Guid id)
+        {
+            try
+            {
+                await _postService.DeletePostAsync(id);
+                return NoContent();  
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetPost(Guid id)
         {
