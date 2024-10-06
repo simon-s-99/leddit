@@ -50,9 +50,9 @@ namespace post.Services
         {
             var post = await _context.Posts.FindAsync(id);
             if (post == null)
-        {
-            throw new System.Exception("Post not found.");
-        }
+            {
+                throw new System.Exception("Post not found.");
+            }
             return post;
         }
     }
