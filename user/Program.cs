@@ -75,12 +75,12 @@ namespace userIdentityAPI
             });
 
             // Add Google Authentication
-            builder.Services.AddAuthentication()
-                .AddGoogle(googleOptions =>
-                {
-                    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-                    googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-                });
+            //builder.Services.AddAuthentication()
+            //    .AddGoogle(googleOptions =>
+            //    {
+            //        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+            //        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+            //    });
 
             // Add Authorization
             builder.Services.AddAuthorization();
@@ -120,15 +120,15 @@ namespace userIdentityAPI
                 app.UseSwaggerUI();
             }
 
-            app.MapGet(
-        "/user",
-        () =>
-        {
-            return "Hello from user!";
-        }
-    )
-    .WithName("User")
-    .WithOpenApi();
+    //        app.MapGet(
+    //    "/user",
+    //    () =>
+    //    {
+    //        return "Hello from user!";
+    //    }
+    //)
+    //.WithName("User")
+    //.WithOpenApi();
 
             app.UseStaticFiles();
             app.UseRouting();

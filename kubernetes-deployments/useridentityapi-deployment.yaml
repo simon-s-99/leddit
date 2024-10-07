@@ -3,20 +3,25 @@ kind: Deployment
 metadata:
   name: useridentityapi-deployment
   labels:
-    app: useridentityapi # Add label here
+    app: useridentityapi
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: useridentityapi
   template:
     metadata:
       labels:
-        app: useridentityapi # Consistent label here as well
+        app: useridentityapi
     spec:
       containers:
         - name: useridentityapi
           image: docker.io/discosam/userimage:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 80
+          env:
+            - name: RABBITMQ_HOST
+              value: "rabbit-service"
+            - name: RABBITMQ_PORT
+              value: "5672"
