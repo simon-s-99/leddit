@@ -32,7 +32,7 @@ namespace post.Controllers
             }
         }
 
-        [HttpPut("{id:guid}")]
+        [HttpPut]
         public async Task<IActionResult> UpdatePost([FromQuery] Guid id, [FromBody] UpdatePostDTO dto)
         {
             try
