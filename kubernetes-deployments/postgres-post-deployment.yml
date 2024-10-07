@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-deployment
+  name: postgres-post-deployment
   labels:
-    app: postgres
+    app: postgres-post
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: postgres-post
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgres-post
     spec:
       containers:
-      - name: postgres-container
+      - name: postgres-post-container
         image: postgres
         imagePullPolicy: Always
         ports:
@@ -27,19 +27,19 @@ spec:
             value: postgres
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
-          name: postgres-pv
+          name: postgres-post-pv
       volumes: #Register volume and volume claim
-      - name: postgres-pv
+      - name: postgres-post-pv
         persistentVolumeClaim:
-          claimName: postgres-pvc
+          claimName: postgres-post-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-service
+  name: postgres-post-service
 spec:
   selector:
-    app: postgres
+    app: postgres-post
   ports:
     - protocol: TCP
       port: 5432
