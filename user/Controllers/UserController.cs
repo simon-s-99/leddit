@@ -110,6 +110,18 @@ namespace UserService.Controllers
             return Ok(profile);
         }
 
+        // Method to retrieve the user ID for the comment microservice
+        // GET: api/user/userid/{userId}
+        [HttpGet("userid/{userId}")]
+        public async Task<IActionResult> GetUserId(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound("User not found");
+
+            return Ok(new { UserId = user.Id });
+        }
+
         // PUT: api/user/profile
         [Authorize]
         [HttpPut("profile")]

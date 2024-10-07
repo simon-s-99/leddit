@@ -12,7 +12,7 @@ using userIdentityAPI.Data;
 namespace userIdentityAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241007142309_InitialCreate")]
+    [Migration("20241007154344_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
