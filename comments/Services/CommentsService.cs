@@ -37,7 +37,10 @@ namespace Comments.Services
             // Get post the comment was posted on, if it is null, throw an exception
             Post? commentPost = _messageService.GetPost(newComment.PostId);
 
-            if (commentPost is null)
+            // Get user the comment was posted by, if it is null, throw an exception
+            ApplicationUser? commentUser = _messageService.GetUser(newComment.AuthorId);
+
+            if (commentPost is null || commentUser is null )
             {
                 throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
             }
@@ -90,9 +93,8 @@ namespace Comments.Services
 
         public List<Comment> GetCommentsFromPostId(Guid id)
         {
-            List<Comment> postComments = _context.Comments.Where(c =>c.PostId == id).ToList();
+            List<Comment> postComments = _context.Comments.Where(c => c.PostId == id).ToList();
             return postComments;
         }
     }
-    
 }

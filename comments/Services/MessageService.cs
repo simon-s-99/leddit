@@ -137,5 +137,35 @@ namespace Comments.Services
 
             return null;
         }
+
+        public ApplicationUser? GetUser(Guid id)
+        {
+            // Send request to post-service
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/user?id=" + id);
+            var response = httpClient.Send(request);
+
+            // If response is 404, return null
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            // Otherwise read the response
+            using var reader = new StreamReader(response.Content.ReadAsStream());
+            var json = reader.ReadToEnd();
+
+            try
+            {
+                // Read the json and return the post object
+                var user = JsonSerializer.Deserialize<ApplicationUser>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return user;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return null;
+        }
     }
 }
