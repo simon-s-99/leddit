@@ -1,7 +1,6 @@
 ﻿using Elastic.Clients.Elasticsearch;
-using Elastic.Clients.Elasticsearch.QueryDsl;
+using Newtonsoft.Json;
 using LedditModels;
-using Search.Models;
 
 namespace Search.Services
 {
@@ -16,12 +15,15 @@ namespace Search.Services
         // search for one datamodel, then the next, then the next
         // & put this in one list sorted in descending order for "searchWeight" /score
 
-        public static async Task<List<SearchResult>> SearchAsync(
+        public static async Task<List<string>> SearchAsync(
             IElasticsearchClientSettings elasticsearchClientSettings,
             string searchTerm)
         {
             // ElasticClient is thread-safe and does not implement IDispose
             var client = new ElasticsearchClient(elasticsearchClientSettings);
+
+            // stores results in list of JSON strings
+            List<string> searchResults = new();
 
             var commentSearchResponse = await client.SearchAsync<Comment>(s => s
                 .Index("comments")
@@ -35,34 +37,21 @@ namespace Search.Services
                 )
             );
 
-            List<SearchResult> results = new();
-
-            Console.WriteLine("----------CONSOLE WRITELINE HERE ================");
-            Console.WriteLine();
-            Console.WriteLine(commentSearchResponse.DebugInformation);
-            Console.WriteLine();
-            Console.WriteLine("====================== CW ends here ---------------");
+            //Console.WriteLine(commentSearchResponse.DebugInformation); // for debugging
 
             if (commentSearchResponse.IsValidResponse)
             {
-                var comment = commentSearchResponse.Documents.FirstOrDefault();
+                foreach (var response in commentSearchResponse.Documents)
+                {
+                    string jsonResponse = JsonConvert.SerializeObject(response);
+                    searchResults.Add(jsonResponse);
+                }
 
-                SearchResult result = new();
-                result.Test = comment.ToString();
-
-                //result.Test = "success";
-
-                results.Add(result);
-
-                return results;
+                return searchResults;
             }
 
-            SearchResult fail = new();
-            fail.Test = "fail";
-
-            results.Add(fail);
-
-            return results;
+            searchResults.Add("No results found OR Invalid response from DB");
+            return searchResults;
         }
     }
 }

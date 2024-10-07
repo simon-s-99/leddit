@@ -20,11 +20,11 @@ namespace Search
                 string elasticUsername = "elastic";
                 string elasticPassword = "dev"; // change this in an actual production environment 
                 var elasticSettings = new ElasticsearchClientSettings(new Uri(elasticConnString))
+                    .Authentication(new BasicAuthentication(elasticUsername, elasticPassword))
+                    //.EnableDebugMode() // allows .DebugInformation on requests to ElasticSearch
                     .DefaultMappingFor<ApplicationUser>(m => m.IndexName("users"))
                     .DefaultMappingFor<Post>(m => m.IndexName("posts"))
-                    .DefaultMappingFor<Comment>(m => m.IndexName("comments"))
-                    .Authentication(new BasicAuthentication(elasticUsername, elasticPassword))
-                    .EnableDebugMode(); // allows .DebugInformation on requests to ElasticSearch
+                    .DefaultMappingFor<Comment>(m => m.IndexName("comments"));
                 return elasticSettings;
             });
 
@@ -32,9 +32,9 @@ namespace Search
 
             var app = builder.Build();
 
-            app.Urls.Add("http://*:9201");
+            app.Urls.Add("http://*:9201"); // allows http connections over port 9201
 
-            app.UseHttpsRedirection();
+            app.UseHttpsRedirection(); // this has no port to redirect to but should be used in actual deployment
 
             app.UseAuthorization();
 
