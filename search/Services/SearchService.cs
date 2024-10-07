@@ -40,18 +40,39 @@ namespace Search.Services
             //Console.WriteLine(commentSearchResponse.DebugInformation); // for debugging
 
             if (commentSearchResponse.IsValidResponse)
-            {
-                foreach (var response in commentSearchResponse.Documents)
-                {
-                    string jsonResponse = JsonConvert.SerializeObject(response);
-                    searchResults.Add(jsonResponse);
-                }
 
-                return searchResults;
+        /// <summary>
+        /// Turns ElasticSearch SearchResponses into formatted JSON-strings.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="searchResponse"></param>
+        /// <returns>A list of responses formatted as JSON-strings.</returns>
+        internal static List<string> ResponseToJson<T>(SearchResponse<T> searchResponse)
+        {
+            // Stores results 
+            List<string> results = new();
+
+            if (searchResponse.IsValidResponse)
+            {
+                if (searchResponse.Hits.Count <= 0)
+                {
+                    results.Add($"No hits when searching for {typeof(T).ToString()}");
+                }
+                else
+                {
+                    foreach (var response in searchResponse.Documents)
+                    {
+                        string jsonResponse = JsonConvert.SerializeObject(response);
+                        results.Add(jsonResponse);
+                    }
+                }
+            }
+            else
+            {
+                results.Add($"Invalid response when searching for {typeof(T).ToString()}");
             }
 
-            searchResults.Add("No results found OR Invalid response from DB");
-            return searchResults;
+            return results;
         }
     }
 }
