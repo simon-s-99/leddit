@@ -14,7 +14,7 @@ namespace userIdentityAPI.Services
             var connectionFactory = new ConnectionFactory
             {
                 HostName = "rabbit-service",
-                Port = "5672",
+                Port = 5672,
                 UserName = "guest",
                 Password = "guest"
             };

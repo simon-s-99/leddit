@@ -16,12 +16,7 @@ spec:
     spec:
       containers:
         - name: useridentityapi
-          image: docker.io/discosam/userimage:latest
-          imagePullPolicy: Always
+          image: docker.io/library/userimage:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 80
-          env:
-            - name: RABBITMQ_HOST
-              value: "rabbit-service"
-            - name: RABBITMQ_PORT
-              value: "5672"
