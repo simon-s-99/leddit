@@ -14,7 +14,7 @@ namespace Search.Services
         // search based on the searchTerm
         // do either free-text search if possible or do 
         // search for one datamodel, then the next, then the next
-        // & put this in one list sorted in descending order for "searchWeight" 
+        // & put this in one list sorted in descending order for "searchWeight" /score
 
         public static async Task<List<SearchResult>> SearchAsync(
             IElasticsearchClientSettings elasticsearchClientSettings,
@@ -28,7 +28,10 @@ namespace Search.Services
                 .From(0)
                 .Size(100)
                 .Query(q => q
-                    .MatchAll(_ => { })
+                    .MatchPhrase(m => m
+                        .Field(f => f.Body)
+                        .Query(searchTerm)
+                    )
                 )
             );
 
@@ -45,9 +48,9 @@ namespace Search.Services
                 var comment = commentSearchResponse.Documents.FirstOrDefault();
 
                 SearchResult result = new();
-                //result.Test = comment.ToString();
+                result.Test = comment.ToString();
 
-                result.Test = "success";
+                //result.Test = "success";
 
                 results.Add(result);
 

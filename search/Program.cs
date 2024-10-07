@@ -15,7 +15,8 @@ namespace Search
             // since elasticsearch indexes based on connectionsettings 
             builder.Services.AddSingleton<IElasticsearchClientSettings, ElasticsearchClientSettings>(sp =>
             {
-                string elasticConnString = "http://172.18.0.2:9200"; //"http://127.0.0.1:9200";
+                // connectionString dns name works over a docker network 
+                string elasticConnString =  "http://elasticsearch:9200";
                 string elasticUsername = "elastic";
                 string elasticPassword = "dev"; // change this in an actual production environment 
                 var elasticSettings = new ElasticsearchClientSettings(new Uri(elasticConnString))
@@ -23,7 +24,7 @@ namespace Search
                     .DefaultMappingFor<Post>(m => m.IndexName("posts"))
                     .DefaultMappingFor<Comment>(m => m.IndexName("comments"))
                     .Authentication(new BasicAuthentication(elasticUsername, elasticPassword))
-                    .EnableDebugMode();
+                    .EnableDebugMode(); // allows .DebugInformation on requests to ElasticSearch
                 return elasticSettings;
             });
 
