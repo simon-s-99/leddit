@@ -1,6 +1,5 @@
 using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Mvc;
-using Search.Models;
 using Search.Services;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute; // avoids ambigous reference error
 
@@ -18,11 +17,10 @@ namespace Search.Controllers
         }
 
         [HttpGet(Name = "search")]
-        public List<SearchResult> Get([FromQuery(Name = "q")] string searchTerm)
+        public List<string> Get([FromQuery(Name = "q")] string searchTerm)
         {
             // runs search logic & returns searchresults 
-            List<SearchResult> searchResults =
-                SearchService.SearchAsync(_elasticsearchClientSettings, searchTerm).Result;
+            List<string> searchResults = SearchService.SearchAsync(_elasticsearchClientSettings, searchTerm).Result;
 
             return searchResults;
         }

@@ -1,63 +1,97 @@
 ﻿using Elastic.Clients.Elasticsearch;
-using Elastic.Clients.Elasticsearch.QueryDsl;
+using Newtonsoft.Json;
 using LedditModels;
-using Search.Models;
 
 namespace Search.Services
 {
     public static class SearchService
     {
-
-        // create multiple overloads that perform the search with 
-        // the given datamodel & query 
-
-        // search based on the searchTerm
-        // do either free-text search if possible or do 
-        // search for one datamodel, then the next, then the next
-        // & put this in one list sorted in descending order for "searchWeight" 
-
-        public static async Task<List<SearchResult>> SearchAsync(
+        public static async Task<List<string>> SearchAsync(
             IElasticsearchClientSettings elasticsearchClientSettings,
             string searchTerm)
         {
             // ElasticClient is thread-safe and does not implement IDispose
             var client = new ElasticsearchClient(elasticsearchClientSettings);
 
-            var commentSearchResponse = await client.SearchAsync<Comment>(s => s
-                .Index("comments")
-                .From(0)
-                .Size(100)
+            // stores results in list of JSON strings
+            List<string> searchResults = new();
+
+            var postSearchResponse = await client.SearchAsync<Post>(s => s
+                .From(0) // provides 0 -->
+                .Size(5) // --> to 5 hits
                 .Query(q => q
-                    .MatchAll(_ => { })
+                    .MatchPhrasePrefix(m => m
+                        .Field(f => f.Content)
+                        .Query(searchTerm)
+                        .Slop(2) // how many positions a word can be moved for a match
+                    )
                 )
             );
 
-            List<SearchResult> results = new();
+            var commentSearchResponse = await client.SearchAsync<Comment>(s => s
+                .From(0) // provides 0 -->
+                .Size(5) // --> to 5 hits
+                .Query(q => q
+                    .MatchPhrasePrefix(m => m
+                        .Field(f => f.Body)
+                        .Query(searchTerm)
+                        .Slop(2) // how many positions a word can be moved for a match
+                    )
+                )
+            );
 
-            Console.WriteLine("----------CONSOLE WRITELINE HERE ================");
-            Console.WriteLine();
-            Console.WriteLine(commentSearchResponse.DebugInformation);
-            Console.WriteLine();
-            Console.WriteLine("====================== CW ends here ---------------");
+            var userSearchResponse = await client.SearchAsync<ApplicationUser>(s => s
+                .From(0) // provides 0 -->
+                .Size(5) // --> to 5 hits
+                .Query(q => q
+                    .MatchPhrasePrefix(m => m
+                        .Field(f => f.DisplayName)
+                        .Query(searchTerm)
+                        .Slop(2) // how many positions a word can be moved for a match
+                    )
+                )
+            );
 
-            if (commentSearchResponse.IsValidResponse)
+            //Console.WriteLine(commentSearchResponse.DebugInformation); // for debugging
+
+            // Add responses formatted to json in returnvalue
+            searchResults.AddRange(ResponseToJson<Post>(postSearchResponse));
+            searchResults.AddRange(ResponseToJson<Comment>(commentSearchResponse));
+            searchResults.AddRange(ResponseToJson<ApplicationUser>(userSearchResponse));
+
+            return searchResults;
+        }
+
+        /// <summary>
+        /// Turns ElasticSearch SearchResponses into formatted JSON-strings.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="searchResponse"></param>
+        /// <returns>A list of responses formatted as JSON-strings.</returns>
+        internal static List<string> ResponseToJson<T>(SearchResponse<T> searchResponse)
+        {
+            // Stores results 
+            List<string> results = new();
+
+            if (searchResponse.IsValidResponse)
             {
-                var comment = commentSearchResponse.Documents.FirstOrDefault();
-
-                SearchResult result = new();
-                //result.Test = comment.ToString();
-
-                result.Test = "success";
-
-                results.Add(result);
-
-                return results;
+                if (searchResponse.Hits.Count <= 0)
+                {
+                    results.Add($"No hits when searching for {typeof(T).ToString()}");
+                }
+                else
+                {
+                    foreach (var response in searchResponse.Documents)
+                    {
+                        string jsonResponse = JsonConvert.SerializeObject(response);
+                        results.Add(jsonResponse);
+                    }
+                }
             }
-
-            SearchResult fail = new();
-            fail.Test = "fail";
-
-            results.Add(fail);
+            else
+            {
+                results.Add($"Invalid response when searching for {typeof(T).ToString()}");
+            }
 
             return results;
         }
