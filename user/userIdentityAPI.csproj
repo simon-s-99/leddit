@@ -28,8 +28,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\LedditModels\LedditModels.csproj" />
 		<ProjectReference Include="../LedditModels/LedditModels.csproj" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
 		<PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Data\Migrations\" />
 	</ItemGroup>
 
 </Project>

@@ -7,6 +7,7 @@ using userIdentityAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using LedditModels;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace userIdentityAPI
 {
@@ -22,11 +23,16 @@ namespace userIdentityAPI
                 builder.Configuration.AddUserSecrets<Program>();
             }
 
-            // Add services to the container.
+            // Add postgres
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
-            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+                options.UseNpgsql(connectionString));
+
+            // old sql connection
+
+            // builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //     options.UseSqlServer(connectionString));
+            // builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             // Add Identity and authentication services
             //builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
