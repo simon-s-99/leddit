@@ -26,13 +26,15 @@ namespace Search.Services
             List<string> searchResults = new();
 
             var commentSearchResponse = await client.SearchAsync<Comment>(s => s
-                .Index("comments")
-                .From(0)
-                .Size(100)
+                //.Index("comments") // should not be needed due to .DefaultMappingFor
+                .From(0) // provides 0
+                .Size(100) // to 100 hits
                 .Query(q => q
-                    .MatchPhrase(m => m
+                    .MatchPhrasePrefix(m => m
                         .Field(f => f.Body)
                         .Query(searchTerm)
+                        //.MinimumShouldMatch(new MinimumShouldMatch(2)) // min. amount of clauses should match
+                        //.Fuzziness(new Fuzziness(1)) // specifies edit distance == 1
                     )
                 )
             );
