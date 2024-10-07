@@ -6,15 +6,6 @@ namespace Search.Services
 {
     public static class SearchService
     {
-
-        // create multiple overloads that perform the search with 
-        // the given datamodel & query 
-
-        // search based on the searchTerm
-        // do either free-text search if possible or do 
-        // search for one datamodel, then the next, then the next
-        // & put this in one list sorted in descending order for "searchWeight" /score
-
         public static async Task<List<string>> SearchAsync(
             IElasticsearchClientSettings elasticsearchClientSettings,
             string searchTerm)
