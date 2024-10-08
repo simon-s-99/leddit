@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using userIdentityAPI.Data;
 using userIdentityAPI.Services;
-using userIdentityAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using LedditModels;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace userIdentityAPI
 {
@@ -81,9 +79,8 @@ namespace userIdentityAPI
             builder.Services.AddHostedService<RabbitMQProducer>();
             builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<RabbitMQProducer>().First());
 
-            // Add Swagger and API Explorer
+            // Add API Explorer
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
@@ -99,13 +96,6 @@ namespace userIdentityAPI
             }
 
             app.UseHttpsRedirection();
-
-            // Enable Swagger in development mode
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
 
             app.UseStaticFiles();
             app.UseRouting();
