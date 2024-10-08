@@ -6,7 +6,7 @@ using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute; // avoids ambigo
 namespace Search.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("/[controller]")]
     public class SearchController : ControllerBase
     {
         private readonly IElasticsearchClientSettings _elasticsearchClientSettings;

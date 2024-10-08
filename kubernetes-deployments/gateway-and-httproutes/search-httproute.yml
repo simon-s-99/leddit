@@ -11,5 +11,5 @@ spec:
         type: PathPrefix
         value: /search
     backendRefs:
-    - name: elasticsearch-svc
-      port: 9200
+    - name: search-api-svc
+      port: 9201

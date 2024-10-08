@@ -15,8 +15,10 @@ namespace Search
             // since elasticsearch indexes based on connectionsettings 
             builder.Services.AddSingleton<IElasticsearchClientSettings, ElasticsearchClientSettings>(sp =>
             {
-                // connectionString dns name works over a docker network 
-                string elasticConnString =  "http://elasticsearch:9200";
+                // connectionString dns name works over k8s
+                // (elastic does not have a built in way of retrieving a connectionsring
+                // from appsettings.json, this can be done manually but is cumbersome)
+                string elasticConnString = "https://elasticsearch-svc.default.svc.cluster.local:9200";
                 string elasticUsername = "elastic";
                 string elasticPassword = "dev"; // change this in an actual production environment 
                 var elasticSettings = new ElasticsearchClientSettings(new Uri(elasticConnString))
@@ -32,9 +34,12 @@ namespace Search
 
             var app = builder.Build();
 
+            // these only work for local testing or docker testing, does not work with k8s
             app.Urls.Add("http://*:9201"); // allows http connections over port 9201
+            //app.Urls.Add("https://*:9201"); // allows https connections over port 9201
 
-            app.UseHttpsRedirection(); // this has no port to redirect to but should be used in actual deployment
+            // this has no port to redirect to but should be used in actual deployment
+            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
