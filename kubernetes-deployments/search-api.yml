@@ -22,11 +22,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: search-api
+      component: search-api
   template:
     metadata:
       labels:
-        app: search-api
+        component: search-api
     spec:
       containers:
       - name: search-api
