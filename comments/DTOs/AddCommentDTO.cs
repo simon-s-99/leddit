@@ -5,7 +5,7 @@ namespace Comments.DTOs
     public class AddCommentDTO
     {
         [Required]
-        public Guid AuthorId { get; set; }
+        public Guid UserId { get; set; }
 
         [Required]
         public Guid PostId { get; set; }

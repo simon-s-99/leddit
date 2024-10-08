@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Comments.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241003093602_PostCommunication")]
-    partial class PostCommunication
+    [Migration("20241008095353_UserCommunication")]
+    partial class UserCommunication
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,9 +31,6 @@ namespace Comments.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -46,6 +43,9 @@ namespace Comments.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("ReplyTo")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");

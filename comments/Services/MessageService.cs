@@ -143,7 +143,7 @@ namespace Comments.Services
         public ApplicationUser? GetUser(Guid id)
         {
             // Connect to service
-            httpClient = new HttpClient { BaseAddress = new Uri("http://useridentityapi-service:8080") };
+            httpClient = new HttpClient { BaseAddress = new Uri("http://useridentityapi-service:80") };
 
             // Send request to user-service
             var request = new HttpRequestMessage(HttpMethod.Get, "api/user/userid/" + id);

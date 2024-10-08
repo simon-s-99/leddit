@@ -28,9 +28,6 @@ namespace Comments.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -43,6 +40,9 @@ namespace Comments.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("ReplyTo")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");

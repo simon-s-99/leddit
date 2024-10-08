@@ -27,7 +27,7 @@ namespace Comments.Services
 
             Comment newComment = new Comment
             {
-                AuthorId = comment.AuthorId,
+                UserId = comment.UserId,
                 PostId = comment.PostId,
                 ReplyTo = comment.ReplyTo ?? null, // If reply exists, add it, otherwise send null
                 DateCreated = DateTime.UtcNow,
@@ -36,9 +36,9 @@ namespace Comments.Services
 
             // Get post the comment was posted on, if it is null, throw an exception
             Post? commentPost = _messageService.GetPost(newComment.PostId);
-
+        
             // Get user the comment was posted by, if it is null, throw an exception
-            ApplicationUser? commentUser = _messageService.GetUser(newComment.AuthorId);
+            ApplicationUser? commentUser = _messageService.GetUser(newComment.UserId);
 
             if (commentPost is null || commentUser is null )
             {
