@@ -1,0 +1,36 @@
+# search-api service 
+apiVersion: v1
+kind: Service
+metadata:
+  name: search-api-svc
+spec:
+  type: ClusterIP # targets cluster it is deployed in  
+  selector:
+    component: search-api # service targets components with this label in the cluster 
+  ports:
+  - port: 9201
+    targetPort: 9201
+
+---
+
+# search-api deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: search-api
+  template:
+    metadata:
+      labels:
+        component: search-api
+    spec:
+      containers:
+      - name: search-api
+        image: docker.io/library/search-api:latest
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 9201
