@@ -38,7 +38,8 @@ namespace Search
             app.Urls.Add("http://*:9201"); // allows http connections over port 9201
             //app.Urls.Add("https://*:9201"); // allows https connections over port 9201
 
-            app.UseHttpsRedirection(); // this has no port to redirect to but should be used in actual deployment
+            // this has no port to redirect to but should be used in actual deployment
+            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
