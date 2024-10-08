@@ -6,6 +6,7 @@ spec:
   selector:
     app: comments
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
+    - appProtocol: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
