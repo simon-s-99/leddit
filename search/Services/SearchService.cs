@@ -6,7 +6,7 @@ namespace Search.Services
 {
     public static class SearchService
     {
-        public static async Task<List<string>> SearchAsync(
+        public static async Task<List<List<string>>> SearchAsync(
             IElasticsearchClientSettings elasticsearchClientSettings,
             string searchTerm)
         {
@@ -14,7 +14,7 @@ namespace Search.Services
             var client = new ElasticsearchClient(elasticsearchClientSettings);
 
             // stores results in list of JSON strings
-            List<string> searchResults = new();
+            List<List<string>> searchResults = new();
 
             var postSearchResponse = await client.SearchAsync<Post>(s => s
                 .From(0) // provides 0 -->
@@ -55,9 +55,21 @@ namespace Search.Services
             //Console.WriteLine(commentSearchResponse.DebugInformation); // for debugging
 
             // Add responses formatted to json in returnvalue
-            searchResults.AddRange(ResponseToJson<Post>(postSearchResponse));
-            searchResults.AddRange(ResponseToJson<Comment>(commentSearchResponse));
-            searchResults.AddRange(ResponseToJson<ApplicationUser>(userSearchResponse));
+            List<string> postSearchResults = new();
+            List<string> commentSearchResults = new();
+            List<string> userSearchResults = new();
+
+            postSearchResults.Add("Type: Posts");
+            commentSearchResults.Add("Type: Comments");
+            userSearchResults.Add("Type: Users");
+
+            postSearchResults.AddRange(ResponseToJson<Post>(postSearchResponse));
+            commentSearchResults.AddRange(ResponseToJson<Comment>(commentSearchResponse));
+            userSearchResults.AddRange(ResponseToJson<ApplicationUser>(userSearchResponse));
+
+            searchResults.Add(postSearchResults);
+            searchResults.Add(commentSearchResults);
+            searchResults.Add(userSearchResults);
 
             return searchResults;
         }
