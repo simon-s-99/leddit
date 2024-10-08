@@ -205,6 +205,13 @@ namespace UserService.Controllers
             return Ok("User account deleted successfully");
         }
 
+        [HttpGet("crash")]
+        public IActionResult CrashApp()
+        {
+            Environment.Exit(1);
+            return Ok("Appen kraschade");
+        }
+
         private string GenerateJwtToken(ApplicationUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
