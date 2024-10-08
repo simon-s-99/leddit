@@ -1,12 +1,12 @@
 using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Mvc;
-using Search.Models;
+using Search.Services;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute; // avoids ambigous reference error
 
 namespace Search.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("/[controller]")]
     public class SearchController : ControllerBase
     {
         private readonly IElasticsearchClientSettings _elasticsearchClientSettings;
@@ -17,19 +17,11 @@ namespace Search.Controllers
         }
 
         [HttpGet(Name = "search")]
-        public IEnumerable<SearchResult> Get()
+        public List<List<string>> Get([FromQuery(Name = "q")] string searchTerm)
         {
-            var client = new ElasticsearchClient(_elasticsearchClientSettings);
-
-            // TODO - implement actual searching here, connection seems to be working 
-
-            var query = Request.QueryString;
-            var result = new SearchResult();
-            result.Test = query.ToString();
-
-            List<SearchResult> searchResults = new();
-
-            searchResults.Add(result);
+            // runs search logic & returns searchresults 
+            List<List<string>> searchResults = 
+                SearchService.SearchAsync(_elasticsearchClientSettings, searchTerm).Result;
 
             return searchResults;
         }
