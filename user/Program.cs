@@ -28,23 +28,6 @@ namespace userIdentityAPI
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(connectionString));
 
-            // old sql connection
-
-            // builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            //     options.UseSqlServer(connectionString));
-            // builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-            // Add Identity and authentication services
-            //builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-            //{
-            //    options.SignIn.RequireConfirmedAccount = false; // Disable email confirmation
-            //    options.Password.RequireDigit = true;           // Require at least one digit
-            //    options.Password.RequiredLength = 6;            // Minimum password length
-            //    options.Password.RequireNonAlphanumeric = false; // Do not require special characters
-            //    options.Password.RequireUppercase = true;       // Require at least one uppercase letter
-            //    options.Password.RequireLowercase = true;       // Require at least one lowercase letter
-            //}).AddEntityFrameworkStores<ApplicationDbContext>();
-
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false; // Disable email confirmation for now
@@ -55,9 +38,7 @@ namespace userIdentityAPI
                 options.Password.RequireLowercase = true;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();  // Add this to generate tokens for password reset, email confirmation, etc.
-
-
+                .AddDefaultTokenProviders();  // generate tokens for password reset, email confirmation, etc.
 
             // Add JWT Authentication
             var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
@@ -104,7 +85,7 @@ namespace userIdentityAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var app = builder.Build();  // Moved service registration before this line
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
