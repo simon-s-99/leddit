@@ -27,9 +27,6 @@ namespace Comments
             builder.Services.AddHttpClient();
             var app = builder.Build();
 
-            // Ensures docker finds the correct port to use
-            app.Urls.Add("http://*:80");
-
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
