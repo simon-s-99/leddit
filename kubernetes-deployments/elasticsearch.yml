@@ -6,11 +6,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: elasticsearch-service
+  name: elasticsearch-svc
 spec:
   type: ClusterIP # targets cluster it is deployed in  
   selector:
-    component: elasticsearch-main # service targets components with this label in the cluster 
+    component: elasticsearch # service targets components with this label in the cluster 
   ports:
   - port: 9200
     targetPort: 9200
@@ -21,7 +21,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: elasticsearch-pv-claim
+  name: elasticsearch-pvc
 spec:
   accessModes:
     # ReadOnlyMany is very unclear whether or not the storage will be read only or 
@@ -39,24 +39,24 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: elasticsearch-main
+  name: elasticsearch
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: elasticsearch-main
+      component: elasticsearch
   template:
     metadata:
       labels:
-        component: elasticsearch-main
+        component: elasticsearch
     spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: elasticsearch-pv-claim
+            claimName: elasticsearch-pvc
       containers:
-        - name: elasticsearch-main
-          image: docker.elastic.co/elasticsearch/elasticsearch:7.17.24
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.15.2
           ports:
             - containerPort: 9200
           volumeMounts:

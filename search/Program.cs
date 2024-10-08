@@ -1,5 +1,6 @@
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
+using LedditModels;
 
 namespace Search
 {
@@ -9,38 +10,38 @@ namespace Search
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             // add elastisearchclient connection settings as a singleton
-            // this is recommended in elasticsearchs documentation 
+            // this is recommended in elasticsearchs documentation & makes sense
+            // since elasticsearch indexes based on connectionsettings 
             builder.Services.AddSingleton<IElasticsearchClientSettings, ElasticsearchClientSettings>(sp =>
             {
-                string elasticConnString = "http://127.0.0.1:9200";
+                // connectionString dns name works over k8s
+                // (elastic does not have a built in way of retrieving a connectionsring
+                // from appsettings.json, this can be done manually but is cumbersome)
+                string elasticConnString = "https://elasticsearch-svc.default.svc.cluster.local:9200";
                 string elasticUsername = "elastic";
-                string elasticPassword = "dev";
+                string elasticPassword = "dev"; // change this in an actual production environment 
                 var elasticSettings = new ElasticsearchClientSettings(new Uri(elasticConnString))
-                    .Authentication(new BasicAuthentication(elasticUsername, elasticPassword));
+                    .Authentication(new BasicAuthentication(elasticUsername, elasticPassword))
+                    //.EnableDebugMode() // allows .DebugInformation on requests to ElasticSearch
+                    .DefaultMappingFor<ApplicationUser>(m => m.IndexName("users"))
+                    .DefaultMappingFor<Post>(m => m.IndexName("posts"))
+                    .DefaultMappingFor<Comment>(m => m.IndexName("comments"));
                 return elasticSettings;
             });
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer(); // swagger related? Remove?
-            builder.Services.AddSwaggerGen(); // swagger related? Remove?
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            // if (app.Environment.IsDevelopment())
-            // {
-            //     app.UseSwagger();
-            //     app.UseSwaggerUI();
-            // }
+            // these only work for local testing or docker testing, does not work with k8s
+            app.Urls.Add("http://*:9201"); // allows http connections over port 9201
+            //app.Urls.Add("https://*:9201"); // allows https connections over port 9201
 
-            app.UseHttpsRedirection();
+            // this has no port to redirect to but should be used in actual deployment
+            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
