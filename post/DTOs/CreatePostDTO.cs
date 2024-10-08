@@ -1,4 +1,6 @@
-﻿namespace post.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace post.DTOs
 {
     public class CreatePostDTO
     {
