@@ -1,22 +1,22 @@
-apiVersion: apps/v1
+﻿apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: comments-deployment
+  name: useridentityapi-deployment
   labels:
-    app: comments
+    app: useridentityapi
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: comments
+      app: useridentityapi
   template:
     metadata:
       labels:
-        app: comments
+        app: useridentityapi
     spec:
       containers:
-        - name: comments-container
-          image: docker.io/library/comments-image:latest
+        - name: useridentityapi
+          image: docker.io/library/userimage:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-comments-deployment
+  labels:
+    app: postgres-comments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-comments
+  template:
+    metadata:
+      labels:
+        app: postgres-comments
+    spec:
+      containers:
+      - name: postgres-comments-container
+        image: postgres
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5432
+        env:
+          - name: POSTGRES_PASSWORD
+            value: password
+          - name: POSTGRES_USER
+            value: postgres
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-comments-pv
+      volumes: #Register volume and volume claim
+      - name: postgres-comments-pv
+        persistentVolumeClaim:
+          claimName: postgres-comments-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-comments-service
+spec:
+  selector:
+    app: postgres-comments
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP # Makes sure the service cannot receive external requests

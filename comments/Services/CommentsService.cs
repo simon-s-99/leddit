@@ -27,12 +27,23 @@ namespace Comments.Services
 
             Comment newComment = new Comment
             {
-                //AuthorId = comment.AuthorId,
-                //PostId = comment.PostId,
+                UserId = comment.UserId,
+                PostId = comment.PostId,
                 ReplyTo = comment.ReplyTo ?? null, // If reply exists, add it, otherwise send null
                 DateCreated = DateTime.UtcNow,
                 Body = comment.Body,
             };
+
+            // Get post the comment was posted on, if it is null, throw an exception
+            Post? commentPost = _messageService.GetPost(newComment.PostId);
+        
+            // Get user the comment was posted by, if it is null, throw an exception
+            ApplicationUser? commentUser = _messageService.GetUser(newComment.UserId);
+
+            if (commentPost is null || commentUser is null )
+            {
+                throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+            }
 
             _context.Comments.Add(newComment);
             _context.SaveChanges();
@@ -78,6 +89,12 @@ namespace Comments.Services
             _messageService.NotifyCommentChanged("edit-comment", commentToUpdate);
 
             return commentToUpdate;
+        }
+
+        public List<Comment> GetCommentsFromPostId(Guid id)
+        {
+            List<Comment> postComments = _context.Comments.Where(c => c.PostId == id).ToList();
+            return postComments;
         }
     }
 }
