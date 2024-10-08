@@ -126,16 +126,6 @@ namespace userIdentityAPI
                 app.UseSwaggerUI();
             }
 
-            //        app.MapGet(
-            //    "/user",
-            //    () =>
-            //    {
-            //        return "Hello from user!";
-            //    }
-            //)
-            //.WithName("User")
-            //.WithOpenApi();
-
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
