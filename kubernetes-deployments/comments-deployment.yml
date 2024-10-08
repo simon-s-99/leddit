@@ -13,9 +13,8 @@ spec:
         app: comments
     spec:
       containers:
-      - name: comments-container
-        image: docker.io/library/comments-image:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 80 
-        
+        - name: comments-container
+          image: docker.io/library/comments-image:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
