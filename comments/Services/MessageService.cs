@@ -13,12 +13,12 @@ namespace Comments.Services
         private IConnection? connection;
         private IModel? channel;
         private IServiceProvider? provider;
-        private HttpClient httpClient;
+        private HttpClient? httpClient;
 
         public MessageService(IServiceProvider? provider)
         {
             this.provider = provider;
-            this.httpClient = new HttpClient();
+            this.httpClient = null;
         }
 
         // Notifies about certain events regarding comments, exchanges are passed to the method
@@ -108,7 +108,7 @@ namespace Comments.Services
         public Post? GetPost(Guid id)
         {
             // Connect to service
-            httpClient.BaseAddress = new Uri("http://post-service:8080");
+            httpClient = new HttpClient { BaseAddress = new Uri("http://post-service:8080") };
 
             // Send request to post-service
             var request = new HttpRequestMessage(HttpMethod.Get, "api/posts?id=" + id);
@@ -143,7 +143,7 @@ namespace Comments.Services
         public ApplicationUser? GetUser(Guid id)
         {
             // Connect to service
-            httpClient.BaseAddress = new Uri("http://useridentity-service:8080");
+            httpClient = new HttpClient { BaseAddress = new Uri("http://useridentity-service:8080") };
 
             // Send request to user-service
             var request = new HttpRequestMessage(HttpMethod.Get, "api/user/userid/" + id);
