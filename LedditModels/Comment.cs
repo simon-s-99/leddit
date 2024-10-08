@@ -8,11 +8,11 @@ namespace LedditModels
         [Required]
         public Guid Id { get; set; }
 
-        //[Required]
-        //public Guid AuthorId { get; set; }
+        [Required]
+        public Guid UserId { get; set; }
 
-        //[Required]
-        //public Guid PostId { get; set; }
+        [Required]
+        public Guid PostId { get; set; }
 
         public Guid? ReplyTo { get; set; } // Optional, the id of the comment that the original comment is in reply to
 

@@ -20,22 +20,12 @@ namespace Comments
 
             builder.Services.AddScoped<CommentsService>();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
             builder.Services.AddHostedService<MessageService>();
             builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<MessageService>().First());
 
+            builder.Services.AddHttpClient();
             var app = builder.Build();
-
-            // Ensures docker finds the correct port to use
-            app.Urls.Add("http://*:80");
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
 
             app.UseHttpsRedirection();
 

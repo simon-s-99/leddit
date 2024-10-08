@@ -4,6 +4,7 @@ using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 using Comments.DTOs;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Comments.Services
 {
@@ -12,15 +13,12 @@ namespace Comments.Services
         private IConnection? connection;
         private IModel? channel;
         private IServiceProvider? provider;
-        private HttpClient httpClient; // Not finished
+        private HttpClient? httpClient;
 
         public MessageService(IServiceProvider? provider)
         {
             this.provider = provider;
-            this.httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("http://localhost:5199")
-            };
+            this.httpClient = null;
         }
 
         // Notifies about certain events regarding comments, exchanges are passed to the method
@@ -44,13 +42,26 @@ namespace Comments.Services
             channel.ExchangeDeclare("delete-comment", ExchangeType.Fanout);
             channel.ExchangeDeclare("edit-comment", ExchangeType.Fanout);
         }
-
-        // Not finished vvvvvv
-        public void ListenForMessages()
+        public Task StartAsync(CancellationToken token)
         {
-            channel.ExchangeDeclare("add-comment", ExchangeType.Fanout);
-            var queue = channel.QueueDeclare("comment", true, false, false);
-            channel.QueueBind(queue, "add-comment", string.Empty);
+            Connect();
+            ListenForMessages();
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken token)
+        {
+            channel?.Close();
+            connection?.Close();
+
+            return Task.CompletedTask;
+        }
+
+        private void ListenForMessages()
+        {
+            channel.ExchangeDeclare("delete-post", ExchangeType.Fanout);
+            var queue = channel.QueueDeclare("post", true, false, false);
+            channel.QueueBind(queue, "delete-post", string.Empty);
 
             var consumer = new EventingBasicConsumer(channel);
 
@@ -61,37 +72,107 @@ namespace Comments.Services
 
                 try
                 {
-                    var comment = JsonSerializer.Deserialize<AddCommentDTO>(json);
-                    Console.WriteLine("Created comment " + comment.Body);
+                    // Get the post object
+                    var post = JsonSerializer.Deserialize<Post>(json);
 
+                    // Create scope for CommentsService
                     using (var scope = provider.CreateScope())
                     {
-                        var commentsService = scope.ServiceProvider.GetRequiredService<CommentsService>();
-                        commentsService.AddComment(comment);
+                        var commentsService = scope.ServiceProvider.GetService<CommentsService>();
+
+                        // Get all comments from the now deleted post
+                        List<Comment> commentsToDelete = commentsService.GetCommentsFromPostId(post.Id);
+
+                        // If post had no comments, return
+                        if (commentsToDelete.Count == 0)
+                        {
+                            return;
+                        }
+
+                        // Otherwise delete them all
+                        foreach (Comment comment in commentsToDelete)
+                        {
+                            commentsService.DeleteComment(comment.Id);
+                        }
                     }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.ToString());
+                    Console.WriteLine(e);
                 }
             };
 
             channel.BasicConsume(queue, true, consumer);
         }
 
-        public Task StartAsync(CancellationToken token)
+        public Post? GetPost(Guid id)
         {
-            Connect();
-            // ListenForMessages();
-            return Task.CompletedTask;
+            // Connect to service
+            httpClient = new HttpClient { BaseAddress = new Uri("http://post-service:8080") };
+
+            // Send request to post-service
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/posts?id=" + id);
+            var response = httpClient.Send(request);
+
+            // If response is 404, return null
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            // Otherwise read the response
+            using var reader = new StreamReader(response.Content.ReadAsStream());
+            var json = reader.ReadToEnd();
+
+            try
+            {
+                // Read the json and return the post object
+                var post = JsonSerializer.Deserialize<Post>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return post;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            httpClient.Dispose();
+
+            return null;
         }
 
-        public Task StopAsync(CancellationToken token)
+        public ApplicationUser? GetUser(Guid id)
         {
-            channel?.Close();
-            connection?.Close();
+            // Connect to service
+            httpClient = new HttpClient { BaseAddress = new Uri("http://useridentityapi-service:80") };
 
-            return Task.CompletedTask;
+            // Send request to user-service
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/user/userid/" + id);
+            var response = httpClient.Send(request);
+
+            // If response is 404, return null
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            // Otherwise read the response
+            using var reader = new StreamReader(response.Content.ReadAsStream());
+            var json = reader.ReadToEnd();
+
+            try
+            {
+                // Read the json and return the post object
+                var user = JsonSerializer.Deserialize<ApplicationUser>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return user;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            httpClient.Dispose();
+
+            return null;
         }
     }
 }

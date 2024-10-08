@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Search", "search\Search.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Comments", "comments\Comments.csproj", "{7D3B39CC-1DC5-4653-B27E-37E9604BA797}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "post", "post\post.csproj", "{D27FB85B-37BF-4F86-B8B5-CA23C68CE758}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "userIdentityAPI", "user\userIdentityAPI.csproj", "{8C98F9AF-4EB5-424C-BB27-BAB571AEDE56}"
 EndProject
 Global
@@ -29,6 +31,10 @@ Global
 		{7D3B39CC-1DC5-4653-B27E-37E9604BA797}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D3B39CC-1DC5-4653-B27E-37E9604BA797}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D3B39CC-1DC5-4653-B27E-37E9604BA797}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D27FB85B-37BF-4F86-B8B5-CA23C68CE758}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D27FB85B-37BF-4F86-B8B5-CA23C68CE758}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D27FB85B-37BF-4F86-B8B5-CA23C68CE758}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D27FB85B-37BF-4F86-B8B5-CA23C68CE758}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8C98F9AF-4EB5-424C-BB27-BAB571AEDE56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C98F9AF-4EB5-424C-BB27-BAB571AEDE56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C98F9AF-4EB5-424C-BB27-BAB571AEDE56}.Release|Any CPU.ActiveCfg = Release|Any CPU
