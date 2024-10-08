@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using LedditModels;
-using post.Data;
 using post.Services;
 using post.DTOs;
 
