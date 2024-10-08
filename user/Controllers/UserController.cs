@@ -209,7 +209,7 @@ namespace UserService.Controllers
         public IActionResult CrashApp()
         {
             Environment.Exit(1);
-            return Ok("Appen kraschade");
+            return Ok("App crashed successfully");
         }
 
         private string GenerateJwtToken(ApplicationUser user)
