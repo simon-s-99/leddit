@@ -61,16 +61,15 @@ namespace Search.Services
             List<string> commentExchanges = new(["add-comment", "edit-comment", "delete-comment"]);
             List<string> userExchanges = new(["register-user", "update-user", "delete-user"]);
 
-            //BindQueuesToExchanges(postExchanges, postQueue);
-            //BindQueuesToExchanges(commentExchanges, commentQueue);
-            //BindQueuesToExchanges(userExchanges, userQueue);
+            BindQueuesToExchanges(postExchanges, postQueue);
+            BindQueuesToExchanges(commentExchanges, commentQueue);
+            BindQueuesToExchanges(userExchanges, userQueue);
 
             Console.WriteLine("We are here -> after bindQs");
-            string haha = "add-post";
 
-            _exchange.ExchangeDeclare("add-post", ExchangeType.Fanout);
-            var queue = _exchange.QueueDeclare("post", true, false, false);
-            _exchange.QueueBind(queue, "add-post", string.Empty);
+            //_exchange.ExchangeDeclare("add-post", ExchangeType.Fanout);
+            //var queue = _exchange.QueueDeclare("post", true, false, false);
+            //_exchange.QueueBind(queue, "add-post", string.Empty);
 
             var consumer = new EventingBasicConsumer(_exchange);
 
@@ -81,8 +80,8 @@ namespace Search.Services
                 string body = ea.Body.ToString();
                 string json = JsonConvert.SerializeObject(body);
 
-                //if (postExchanges.Contains(ea.Exchange)) // if exchange type belongs to post queue 
-                //{
+                if (postExchanges.Contains(ea.Exchange)) // if exchange type belongs to post queue 
+                {
                     Console.WriteLine("We are here -> in post if branch");
 
                     // Get the post object
@@ -90,7 +89,7 @@ namespace Search.Services
 
                     using (var scope = _serviceProvider.CreateScope())
                     {
-                        var searchService = scope.ServiceProvider.GetService<SearchService>();
+                        var searchService = scope.ServiceProvider.GetRequiredService<SearchService>();
                         try
                         {
                             Console.WriteLine("We are here -> trying to index post");
@@ -103,49 +102,51 @@ namespace Search.Services
                             Console.WriteLine(ex.Message);
                         }
                     }
-                //}
-                //else if (commentExchanges.Contains(ea.Exchange)) // if exchange type belongs to comment queue
-                //{
-                //    // Get the comment object
-                //    Comment comment = System.Text.Json.JsonSerializer.Deserialize<Comment>(json);
+                }
+                else if (commentExchanges.Contains(ea.Exchange)) // if exchange type belongs to comment queue
+                {
+                    // Get the comment object
+                    Comment comment = System.Text.Json.JsonSerializer.Deserialize<Comment>(json);
 
-                //    using (var scope = _serviceProvider.CreateScope())
-                //    {
-                //        var searchService = scope.ServiceProvider.GetService<SearchService>();
-                //        try
-                //        {
-                //            searchService.IndexDocument<Comment>(comment);
-                //        }
-                //        catch (Exception ex)
-                //        {
-                //            Console.WriteLine(ex.Message);
-                //        }
-                //    }
-                //}
-                //else if (userExchanges.Contains(ea.Exchange)) // if exchange type belongs to user queue
-                //{
-                //    // Get the user object
-                //    ApplicationUser user = System.Text.Json.JsonSerializer.Deserialize<ApplicationUser>(json);
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var searchService = scope.ServiceProvider.GetRequiredService<SearchService>();
+                        try
+                        {
+                            Console.WriteLine("We are here -> trying to index COMMENT");
+                            searchService.IndexDocument<Comment>(comment);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                }
+                else if (userExchanges.Contains(ea.Exchange)) // if exchange type belongs to user queue
+                {
+                    // Get the user object
+                    ApplicationUser user = System.Text.Json.JsonSerializer.Deserialize<ApplicationUser>(json);
 
-                //    using (var scope = _serviceProvider.CreateScope())
-                //    {
-                //        var searchService = scope.ServiceProvider.GetService<SearchService>();
-                //        try
-                //        {
-                //            searchService.IndexDocument<ApplicationUser>(user);
-                //        }
-                //        catch (Exception ex)
-                //        {
-                //            Console.WriteLine(ex.Message);
-                //        }
-                //    }
-                //}
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var searchService = scope.ServiceProvider.GetRequiredService<SearchService>();
+                        try
+                        {
+                            searchService.IndexDocument<ApplicationUser>(user);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                }
             };
 
             Console.WriteLine("We are here -> 1 line above basicconsume");
-            _exchange.BasicConsume(queue/*postQueue*/, true, consumer);
-            //_exchange.BasicConsume(commentQueue, true, consumer);
-            //_exchange.BasicConsume(userQueue, true, consumer);
+            _exchange.BasicConsume(postQueue, true, consumer);
+            _exchange.BasicConsume(commentQueue, true, consumer);
+            _exchange.BasicConsume(userQueue, true, consumer);
+            Console.WriteLine("We are here -> 1 line BELOW basicconsume");
         }
 
         /// <summary>
