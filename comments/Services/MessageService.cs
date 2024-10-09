@@ -105,6 +105,50 @@ namespace Comments.Services
             channel.BasicConsume(queue, true, consumer);
         }
 
+        public Object? GetObject(Guid id, string service)
+        {
+            // Connect to service
+            httpClient = new HttpClient { BaseAddress = new Uri("http://" + service + ":8080") };
+
+            HttpRequestMessage? request = new HttpRequestMessage(HttpMethod.Get, "");
+
+            if (service == "post-service")
+            {
+                request.RequestUri = new Uri("api/posts?id=" + id);
+            }
+            else
+            {
+                request.RequestUri = new Uri("api/user/userid/" + id);
+            }
+
+            // Send request to post-service
+            var response = httpClient.Send(request);
+
+            // If response is 404, return null
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            // Otherwise read the response
+            using var reader = new StreamReader(response.Content.ReadAsStream());
+            var json = reader.ReadToEnd();
+
+            try
+            {
+                // Read the json and return the post object
+                var post = JsonSerializer.Deserialize<Post>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return post;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            httpClient.Dispose();
+
+            return null;
+        }
         public Post? GetPost(Guid id)
         {
             // Connect to service
