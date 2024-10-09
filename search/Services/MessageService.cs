@@ -57,7 +57,7 @@ namespace Search.Services
             string commentQueue = "comment";
             string userQueue = "user";
 
-            List<string> postExchanges = new(["add-post", "update-post", "delete-post", "add-post"]);
+            List<string> postExchanges = new(["add-post", "update-post", "delete-post"]);
             List<string> commentExchanges = new(["add-comment", "edit-comment", "delete-comment"]);
             List<string> userExchanges = new(["register-user", "update-user", "delete-user"]);
 
@@ -66,10 +66,6 @@ namespace Search.Services
             BindQueuesToExchanges(userExchanges, userQueue);
 
             Console.WriteLine("We are here -> after bindQs");
-
-            //_exchange.ExchangeDeclare("add-post", ExchangeType.Fanout);
-            //var queue = _exchange.QueueDeclare("post", true, false, false);
-            //_exchange.QueueBind(queue, "add-post", string.Empty);
 
             var consumer = new EventingBasicConsumer(_exchange);
 
