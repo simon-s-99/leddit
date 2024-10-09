@@ -10,7 +10,7 @@ namespace Search
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // add elastisearchclient connection settings as a singleton
+            // add elastisearchclient _connection settings as a singleton
             // this is recommended in elasticsearchs documentation & makes sense
             // since elasticsearch indexes based on connectionsettings 
             builder.Services.AddSingleton<IElasticsearchClientSettings, ElasticsearchClientSettings>(sp =>
