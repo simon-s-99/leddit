@@ -3,6 +3,7 @@ using RabbitMQ.Client.Events;
 using LedditModels;
 using Newtonsoft.Json;
 using System.Text;
+using Newtonsoft.Json.Bson;
 
 namespace Search.Services
 {
@@ -10,12 +11,12 @@ namespace Search.Services
     {
         private IConnection? _connection;
         private IModel? _exchange; // _exchange
-        private IServiceProvider? _serviceProvider;
+        //private IServiceProvider? _serviceProvider;
 
-        public MessageService(IServiceProvider? serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
+        //public MessageService(IServiceProvider? serviceProvider)
+        //{
+        //    _serviceProvider = serviceProvider;
+        //}
 
         public Task StartAsync(CancellationToken token)
         {
@@ -48,44 +49,11 @@ namespace Search.Services
 
         private void ListenForMessages()
         {
-            // ========= Posts
-            //channel.ExchangeDeclare("add-post", ExchangeType.Fanout);
-            //channel.ExchangeDeclare("update-post", ExchangeType.Fanout);
-            //channel.ExchangeDeclare("delete-post", ExchangeType.Fanout);
-            // ========= Posts
+            BindQueuesToExchanges(new(["add-post", "update-post", "delete-post"]), "post");
+            BindQueuesToExchanges(new(["add-comment", "edit-comment", "delete-comment"]), "comment");
+            BindQueuesToExchanges(new(["register-user", "update-user", "delete-user"]), "user");
 
-            // ========= Comments
-            //channel.ExchangeDeclare("add-comment", ExchangeType.Fanout);
-            //channel.ExchangeDeclare("edit-comment", ExchangeType.Fanout);
-            //channel.ExchangeDeclare("delete-comment", ExchangeType.Fanout);
-            // ========= Comments
-
-            // ========= Users
-            //_channel.ExchangeDeclare(exchange: "register-user", type: ExchangeType.Fanout);
-            //_channel.ExchangeDeclare(exchange: "update-user", type: ExchangeType.Fanout);
-            //_channel.ExchangeDeclare(exchange: "delete-user", type: ExchangeType.Fanout);
-            // ========= Users
-
-            List<string> postExchangeNames = new(["add-post", "update-post", "delete-post"]);
-            List<string> commentExchangeNames = new(["add-comment", "edit-comment", "delete-comment"]);
-            List<string> userExchangeNames = new(["register-user", "update-user", "delete-user"]);
-
-            _exchange.ExchangeDeclare("add-post", ExchangeType.Fanout);
-            //var queue = _exchange.QueueDeclare(queue: "post", durable: true, exclusive: false, autoDelete: false);
-            _exchange.QueueBind(queue:
-                _exchange.QueueDeclare(queue:
-                    "post",
-                    durable: true,
-                    exclusive: false,
-                    autoDelete: false
-                ),
-                exchange: "add-post",
-                routingKey: ""
-            );
-
-
-
-
+            /*
             _exchange.ExchangeDeclare("delete-post", ExchangeType.Fanout);
             var queue = _exchange.QueueDeclare("post", true, false, false);
             _exchange.QueueBind(queue, "delete-post", string.Empty);
@@ -100,13 +68,13 @@ namespace Search.Services
                 try
                 {
                     // Get the post object
-                    var post = JsonSerializer.Deserialize<Post>(json);
+                    //var post = JsonSerializer.Deserialize<Post>(json);
 
                     // Create scope for CommentsService
-                    using (var scope = _serviceProvider.CreateScope())
-                    {
-                        var commentsService = scope.ServiceProvider.GetService<SearchService>();
-                    }
+                    //using (var scope = _serviceProvider.CreateScope())
+                    //{
+                    //    var commentsService = scope.ServiceProvider.GetService<SearchService>();
+                    //}
                 }
                 catch (Exception e)
                 {
@@ -115,7 +83,31 @@ namespace Search.Services
             };
 
             _exchange.BasicConsume(queue, true, consumer);
+            */
         }
 
+        /// <summary>
+        /// Binds exchangeNames to specified queue.
+        /// </summary>
+        /// <param name="exchangeNames">Names of declared exchanges to bind to queue.</param>
+        /// <param name="queueName">Name of queue that exchanges will bind to.</param>
+        private void BindQueuesToExchanges(List<string> exchangeNames, string queueName)
+        {
+            foreach (string exchangeName in exchangeNames)
+            {
+                _exchange.ExchangeDeclare(exchangeName, ExchangeType.Fanout);
+                //var queue = _exchange.QueueDeclare(queue: "post", durable: true, exclusive: false, autoDelete: false);
+                _exchange.QueueBind(queue:
+                    _exchange.QueueDeclare(queue:
+                        queueName,
+                        durable: true,
+                        exclusive: false,
+                        autoDelete: false
+                    ),
+                    exchange: exchangeName,
+                    routingKey: ""
+                );
+            }
+        }
     }
 }
