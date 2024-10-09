@@ -80,6 +80,7 @@ namespace Search.Services
         // add/index a document in elasticsearch db 
         public async void IndexDocument<T>(T document)
         {
+            Console.WriteLine("We are here -> IndexDocument<T>() in SearchService");
             var response = await _client.IndexAsync<T>(document);
             if (!response.IsValidResponse) { throw new ApplicationException("Invalid response from ES"); }
         }

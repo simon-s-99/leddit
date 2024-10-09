@@ -13,11 +13,13 @@ namespace Search.Services
 
         public MessageService(IServiceProvider? serviceProvider)
         {
+            Console.WriteLine("We are here -> ctor of msgservice");
             _serviceProvider = serviceProvider;
         }
 
         public Task StartAsync(CancellationToken token)
         {
+            Console.WriteLine("We are here -> StartAsync for msgservice");
             Connect();
             ListenForMessages();
             return Task.CompletedTask;
@@ -25,6 +27,7 @@ namespace Search.Services
 
         public Task StopAsync(CancellationToken token)
         {
+            Console.WriteLine("We are here -> stopasync of msgservice");
             _exchange?.Close();
             _connection?.Close();
 
@@ -33,6 +36,7 @@ namespace Search.Services
 
         private void Connect()
         {
+            Console.WriteLine("We are here -> connect() in msgservice");
             var connectionFactory = new ConnectionFactory
             {
                 HostName = "rabbit-service",
@@ -47,6 +51,7 @@ namespace Search.Services
 
         private void ListenForMessages()
         {
+            Console.WriteLine("We are here -> ListenForMessages()");
             string postQueue = "post";
             string commentQueue = "comment";
             string userQueue = "user";
