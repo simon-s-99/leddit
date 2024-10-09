@@ -64,15 +64,21 @@ namespace Search.Services
             BindQueuesToExchanges(commentExchanges, commentQueue);
             BindQueuesToExchanges(userExchanges, userQueue);
 
+            Console.WriteLine("We are here -> after bindQs");
+
             var consumer = new EventingBasicConsumer(_exchange);
 
             consumer.Received += async (model, ea) =>
             {
+                Console.WriteLine("We are here -> in consumer.Received");
+
                 string body = ea.Body.ToString();
                 string json = JsonConvert.SerializeObject(body);
 
                 if (postExchanges.Contains(ea.Exchange)) // if exchange type belongs to post queue 
                 {
+                    Console.WriteLine("We are here -> in post if branch");
+
                     // Get the post object
                     Post post = System.Text.Json.JsonSerializer.Deserialize<Post>(json);
 
@@ -81,10 +87,13 @@ namespace Search.Services
                         var searchService = scope.ServiceProvider.GetService<SearchService>();
                         try
                         {
+                            Console.WriteLine("We are here -> trying to index post");
                             searchService.IndexDocument<Post>(post);
+                            Console.WriteLine("We are here -> index should have worked?");
                         }
                         catch (Exception ex)
                         {
+                            Console.WriteLine("We are here -> exception on post index");
                             Console.WriteLine(ex.Message);
                         }
                     }
@@ -127,9 +136,10 @@ namespace Search.Services
                 }
             };
 
+            Console.WriteLine("We are here -> 1 line above basicconsume");
             _exchange.BasicConsume(postQueue, true, consumer);
-            _exchange.BasicConsume(commentQueue, true, consumer);
-            _exchange.BasicConsume(userQueue, true, consumer);
+            //_exchange.BasicConsume(commentQueue, true, consumer);
+            //_exchange.BasicConsume(userQueue, true, consumer);
         }
 
         /// <summary>
@@ -139,8 +149,10 @@ namespace Search.Services
         /// <param name="queueName">Name of queue that exchanges will bind to.</param>
         private void BindQueuesToExchanges(List<string> exchangeNames, string queueName)
         {
+            Console.WriteLine("We are here -> binqstoExchanges");
             foreach (string exchangeName in exchangeNames)
             {
+                Console.WriteLine("We are here ->> This msg should appear 3-9 times");
                 _exchange.ExchangeDeclare(exchangeName, ExchangeType.Fanout);
                 _exchange.QueueBind(queue:
                     _exchange.QueueDeclare(queue:
