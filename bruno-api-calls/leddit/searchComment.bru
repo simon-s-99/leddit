@@ -1,0 +1,15 @@
+meta {
+  name: searchComment
+  type: http
+  seq: 7
+}
+
+get {
+  url: http://localhost:9200/search?q=heeee
+  body: none
+  auth: none
+}
+
+params:query {
+  q: heeee
+}

@@ -1,0 +1,21 @@
+meta {
+  name: updateComment
+  type: http
+  seq: 3
+}
+
+patch {
+  url: http://127.0.0.1:50072/comments?id=429a9f36-0688-4b93-ace9-76c028ed2c38 
+  body: json
+  auth: none
+}
+
+params:query {
+  id: 429a9f36-0688-4b93-ace9-76c028ed2c38 
+}
+
+body:json {
+  {
+    "body": "yes!!!!"
+  }
+}

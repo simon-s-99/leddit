@@ -1,0 +1,18 @@
+meta {
+  name: addPost
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://127.0.0.1:51665/api/posts
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "hello!",
+    "content": "yo!"
+  }
+}

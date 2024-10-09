@@ -1,0 +1,19 @@
+meta {
+  name: addComment
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:50072/comments
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "postid": "d3bf17df-aa90-4722-88bf-3c0ae2f56b6b",
+    "userid": "94167aeb-2e3a-40ca-a4c0-8d15a374b9f4",
+    "body": "hello!!!"
+  }
+}
