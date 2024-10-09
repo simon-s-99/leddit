@@ -1,4 +1,5 @@
-﻿using LedditModels;
+﻿using System.Threading.Tasks;
+using LedditModels;
 using post.Data;
 using post.DTOs;
 
@@ -17,6 +18,11 @@ namespace post.Services
 
         public async Task<Guid> CreatePostAsync(CreatePostDTO dto)
         {
+            if (dto.UserId == Guid.Empty)
+            {
+                throw new ArgumentException("UserId is required.");
+            }
+            
             var post = new Post
             {
                 Title = dto.Title,
