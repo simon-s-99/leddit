@@ -33,6 +33,9 @@ namespace Search
 
             builder.Services.AddScoped<SearchService>();
 
+            builder.Services.AddHostedService<MessageService>();
+            builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<MessageService>().First());
+
             builder.Services.AddControllers();
 
             var app = builder.Build();
