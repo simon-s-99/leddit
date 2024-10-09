@@ -108,21 +108,23 @@ namespace Comments.Services
 
         public bool CheckObjectExists(Guid id, string service)
         {
+            // Build URI from service string
+            var baseAddress = new UriBuilder
+            {
+                Scheme = "http",
+                Host = service,
+                Port = 8080
+            }.Uri;
+
             // Connect to service
-            httpClient = new HttpClient { BaseAddress = new Uri("http://" + service + ":8080") };
+            httpClient = new HttpClient { BaseAddress = baseAddress };
 
-            // Declare new http request
-            HttpRequestMessage? request = new HttpRequestMessage(HttpMethod.Get, "");
-
-            // Request URI depends on passed service
-            if (service == "post-service")
-            {
-                request.RequestUri = new Uri("api/posts?id=" + id);
-            }
-            else
-            {
-                request.RequestUri = new Uri("api/user/userid/" + id);
-            }
+            // Declare new http request based on passed service
+            HttpRequestMessage request = new HttpRequestMessage(
+                HttpMethod.Get, service == "post-service" ? 
+                "api/posts?id=" + id : 
+                "api/user/userid/" + id
+            );
 
             // Send request to post-service
             var response = httpClient.Send(request);
