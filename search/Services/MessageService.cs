@@ -70,33 +70,55 @@ namespace Search.Services
                 {
                     // Get the post object
                     Post post = System.Text.Json.JsonSerializer.Deserialize<Post>(json);
-                    
+
                     using (var scope = _serviceProvider.CreateScope())
                     {
-                        //var searchService = scope.ServiceProvider.GetService<SearchService>();
+                        var searchService = scope.ServiceProvider.GetService<SearchService>();
+                        try
+                        {
+                            searchService.IndexDocument<Post>(post);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
                     }
                 }
                 else if (commentExchanges.Contains(ea.Exchange)) // if exchange type belongs to comment queue
                 {
+                    // Get the comment object
+                    Comment comment = System.Text.Json.JsonSerializer.Deserialize<Comment>(json);
 
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var searchService = scope.ServiceProvider.GetService<SearchService>();
+                        try
+                        {
+                            searchService.IndexDocument<Comment>(comment);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
                 }
                 else if (userExchanges.Contains(ea.Exchange)) // if exchange type belongs to user queue
                 {
+                    // Get the user object
+                    ApplicationUser user = System.Text.Json.JsonSerializer.Deserialize<ApplicationUser>(json);
 
-                }
-
-                try
-                {
-
-                    // Create scope for CommentsService
-                    //using (var scope = _serviceProvider.CreateScope())
-                    //{
-                    //    var commentsService = scope.ServiceProvider.GetService<SearchService>();
-                    //}
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var searchService = scope.ServiceProvider.GetService<SearchService>();
+                        try
+                        {
+                            searchService.IndexDocument<ApplicationUser>(user);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
                 }
             };
 

@@ -4,19 +4,22 @@ using LedditModels;
 
 namespace Search.Services
 {
-    public static class SearchService
+    public class SearchService
     {
-        public static async Task<List<List<string>>> SearchAsync(
-            IElasticsearchClientSettings elasticsearchClientSettings,
-            string searchTerm)
+        private ElasticsearchClient _client;
+
+        public SearchService(IElasticsearchClientSettings elasticsearchClientSettings)
         {
             // ElasticClient is thread-safe and does not implement IDispose
-            var client = new ElasticsearchClient(elasticsearchClientSettings);
+            _client = new ElasticsearchClient(elasticsearchClientSettings);
+        }
 
+        public async Task<List<List<string>>> SearchAsync(string searchTerm)
+        {
             // stores results in list of JSON strings
             List<List<string>> searchResults = new();
 
-            var postSearchResponse = await client.SearchAsync<Post>(s => s
+            var postSearchResponse = await _client.SearchAsync<Post>(s => s
                 .From(0) // provides 0 -->
                 .Size(5) // --> to 5 hits
                 .Query(q => q
@@ -28,7 +31,7 @@ namespace Search.Services
                 )
             );
 
-            var commentSearchResponse = await client.SearchAsync<Comment>(s => s
+            var commentSearchResponse = await _client.SearchAsync<Comment>(s => s
                 .From(0) // provides 0 -->
                 .Size(5) // --> to 5 hits
                 .Query(q => q
@@ -40,7 +43,7 @@ namespace Search.Services
                 )
             );
 
-            var userSearchResponse = await client.SearchAsync<ApplicationUser>(s => s
+            var userSearchResponse = await _client.SearchAsync<ApplicationUser>(s => s
                 .From(0) // provides 0 -->
                 .Size(5) // --> to 5 hits
                 .Query(q => q
@@ -74,13 +77,20 @@ namespace Search.Services
             return searchResults;
         }
 
+        // add/index a document in elasticsearch db 
+        public async void IndexDocument<T>(T document)
+        {
+            var response = await _client.IndexAsync<T>(document);
+            if (!response.IsValidResponse) { throw new ApplicationException("Invalid response from ES"); }
+        }
+
         /// <summary>
         /// Turns ElasticSearch SearchResponses into formatted JSON-strings.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="searchResponse"></param>
         /// <returns>A list of responses formatted as JSON-strings.</returns>
-        internal static List<string> ResponseToJson<T>(SearchResponse<T> searchResponse)
+        internal List<string> ResponseToJson<T>(SearchResponse<T> searchResponse)
         {
             // Stores results 
             List<string> results = new();

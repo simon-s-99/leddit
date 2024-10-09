@@ -1,6 +1,7 @@
 using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
 using LedditModels;
+using Search.Services;
 
 namespace Search
 {
@@ -18,7 +19,7 @@ namespace Search
                 // connectionString dns name works over k8s
                 // (elastic does not have a built in way of retrieving a connectionsring
                 // from appsettings.json, this can be done manually but is cumbersome)
-                string elasticConnString = "https://elasticsearch-svc.default.svc.cluster.local:9200";
+                string elasticConnString = "https://localhost:9200"; //"https://elasticsearch-svc.default.svc.cluster.local:9200";
                 string elasticUsername = "elastic";
                 string elasticPassword = "dev"; // change this in an actual production environment 
                 var elasticSettings = new ElasticsearchClientSettings(new Uri(elasticConnString))
@@ -29,6 +30,8 @@ namespace Search
                     .DefaultMappingFor<Comment>(m => m.IndexName("comments"));
                 return elasticSettings;
             });
+
+            builder.Services.AddScoped<SearchService>();
 
             builder.Services.AddControllers();
 
