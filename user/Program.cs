@@ -73,8 +73,6 @@ namespace userIdentityAPI
             // Register MVC Controllers
             builder.Services.AddControllers();
 
-            builder.Services.AddRazorPages();
-
             // Add RabbitMQProducer as a hosted service
             builder.Services.AddHostedService<RabbitMQProducer>();
             builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<RabbitMQProducer>().First());
@@ -105,7 +103,6 @@ namespace userIdentityAPI
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapRazorPages();
 
             app.Run();
         }

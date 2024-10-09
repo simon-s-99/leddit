@@ -9,6 +9,8 @@ using userIdentityAPI.Services;
 using LedditModels;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.DTOs;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UserService.Controllers
 {
@@ -74,12 +76,20 @@ namespace UserService.Controllers
                 return Unauthorized("Invalid credentials");
 
             var user = await _userManager.FindByNameAsync(loginUserDto.Username);
+
+            // Generate a JWT token for the logged in user
             var token = GenerateJwtToken(user);
 
+           
             return Ok(new { message = "User logged in successfully", token });
         }
 
+
         // POST: api/user/logout
+        // The logout method cannot invalidate a JWT token because JWTs are stateless.
+        // Once a JWT is issued, the server has no control over it until it naturally expires.
+        // We could implement a solution where the token gets blacklisted when logged out,
+        // but this would just make testing the API a bit more complicated
         [Authorize]
         [HttpPost("logout")]
         public IActionResult Logout()
@@ -87,7 +97,9 @@ namespace UserService.Controllers
             return Ok("User logged out successfully");
         }
 
+
         // GET: api/user/profile/{username}
+        // Method that fetches an users info
         [HttpGet("profile/{username}")]
         public async Task<IActionResult> GetUserProfile(string username)
         {
@@ -106,24 +118,13 @@ namespace UserService.Controllers
                 DateOfBirth = user.DateOfBirth,
                 Karma = user.Karma
             };
-
             return Ok(profile);
         }
 
-        // Method to retrieve the user ID for the comment microservice
-        // GET: api/user/userid/{userId}
-        [HttpGet("userid/{userId}")]
-        public async Task<IActionResult> GetUserId(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return NotFound("User not found");
 
-            return Ok(new { UserId = user.Id });
-        }
-
-        // PUT: api/user/profile
-        [Authorize]
+       // Updates the profile information of the currently authenticated user
+       // PUT: api/user/profile
+       [Authorize]
         [HttpPut("profile")]
         public async Task<IActionResult> UpdateUserProfile([FromBody] UpdateUserProfileDto updateUserProfileDto)
         {
@@ -150,6 +151,19 @@ namespace UserService.Controllers
 
             return Ok("Profile updated successfully");
         }
+
+        // Method to retrieve the user ID for the comment microservice
+        // GET: api/user/userid/{userId}
+        [HttpGet("userid/{userId}")]
+        public async Task<IActionResult> GetUserId(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound("User not found");
+
+            return Ok(new { UserId = user.Id });
+        }
+
 
         // POST: api/user/change-password
         [Authorize]
@@ -212,6 +226,7 @@ namespace UserService.Controllers
             return Ok("App crashed successfully");
         }
 
+        // Generates a JWT token for the specified user to authorize API requests
         private string GenerateJwtToken(ApplicationUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
