@@ -57,7 +57,7 @@ namespace Search.Services
             string commentQueue = "comment";
             string userQueue = "user";
 
-            List<string> postExchanges = new(["add-post", "update-post", "delete-post"]);
+            List<string> postExchanges = new(["add-post", "update-post", "delete-post", "add-post"]);
             List<string> commentExchanges = new(["add-comment", "edit-comment", "delete-comment"]);
             List<string> userExchanges = new(["register-user", "update-user", "delete-user"]);
 
