@@ -35,6 +35,12 @@ namespace post.Services
             var message = Encoding.UTF8.GetBytes($"{exchange}: {postJson}");
 
             channel.BasicPublish(string.Empty, "events", null, message);
+
+            if (exchange == "delete-post")
+            {
+                var commentMessage = Encoding.UTF8.GetBytes(postJson);
+                channel.BasicPublish(string.Empty, "post", null, commentMessage);
+            }
         }
 
         public Task StartAsync(CancellationToken token)
