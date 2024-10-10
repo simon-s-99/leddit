@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-logs-deployment
+  labels:
+    app: postgres-logs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-logs
+  template:
+    metadata:
+      labels:
+        app: postgres-logs
+    spec:
+      containers:
+      - name: postgres-logs-container
+        image: postgres
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5432
+        env:
+          - name: POSTGRES_PASSWORD
+            value: password
+          - name: POSTGRES_USER
+            value: postgres
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: logs-pv
+      volumes: #Register volume and volume claim
+      - name: logs-pv
+        persistentVolumeClaim:
+          claimName: logs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-logs-service
+spec:
+  selector:
+    app: postgres-logs
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP # Makes sure the service cannot receive external requests
