@@ -27,11 +27,11 @@ spec:
             value: postgres
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
-          name: logs-pv
+          name: postgres-logs-pv
       volumes: #Register volume and volume claim
-      - name: logs-pv
+      - name: postgres-logs-pv
         persistentVolumeClaim:
-          claimName: logs-pvc
+          claimName: postgres-logs-pvc
 ---
 apiVersion: v1
 kind: Service

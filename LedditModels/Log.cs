@@ -9,7 +9,7 @@ namespace LedditModels
         public Guid Id { get; set; }
 
         [Required]
-        public string Body { get; set; }
+        public string Body { get; set; } = string.Empty;
 
         [Required]
         public DateTime CreatedDate { get; set; }

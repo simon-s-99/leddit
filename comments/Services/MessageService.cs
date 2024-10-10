@@ -24,10 +24,11 @@ namespace Comments.Services
         // Notifies about certain events regarding comments, exchanges are passed to the method
         public void NotifyCommentChanged(string exchange, Comment comment)
         {
+            var queue = channel.QueueDeclare("events", true, false, false);
             var commentJson = JsonSerializer.Serialize(comment);
-            var message = Encoding.UTF8.GetBytes(commentJson);
+            var message = Encoding.UTF8.GetBytes($"{exchange}: {commentJson}");
 
-            channel.BasicPublish(exchange, string.Empty, null, message);
+            channel.BasicPublish(string.Empty, "events", null, message);
         }
 
         public void Connect()
@@ -67,13 +68,17 @@ namespace Comments.Services
 
             consumer.Received += (model, ea) =>
             {
+                Console.WriteLine("In CM");
                 var body = ea.Body.ToArray();
                 var json = Encoding.UTF8.GetString(body);
+                Console.WriteLine("json:" + json);
+                Console.WriteLine("After json");
 
                 try
                 {
                     // Get the post object
                     var post = JsonSerializer.Deserialize<Post>(json);
+                    Console.WriteLine("post:" + post);
 
                     // Create scope for CommentsService
                     using (var scope = provider.CreateScope())
@@ -82,6 +87,7 @@ namespace Comments.Services
 
                         // Get all comments from the now deleted post
                         List<Comment> commentsToDelete = commentsService.GetCommentsFromPostId(post.Id);
+                        Console.WriteLine("comments:" + commentsToDelete, "postID:" + post.Id);
 
                         // If post had no comments, return
                         if (commentsToDelete.Count == 0)

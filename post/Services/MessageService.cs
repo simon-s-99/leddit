@@ -30,10 +30,11 @@ namespace post.Services
 
         public void NotifyPostChanged(string exchange, Post post)
         {
+            var queue = channel.QueueDeclare("events", true, false, false);
             var postJson = JsonSerializer.Serialize(post);
-            var message = Encoding.UTF8.GetBytes(postJson);
+            var message = Encoding.UTF8.GetBytes($"{exchange}: {postJson}");
 
-            channel.BasicPublish(exchange, string.Empty, null, message);
+            channel.BasicPublish(string.Empty, "events", null, message);
         }
 
         public Task StartAsync(CancellationToken token)
