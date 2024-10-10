@@ -34,13 +34,11 @@ namespace Comments.Services
                 Body = comment.Body,
             };
 
-            // Get post the comment was posted on, if it is null, throw an exception
-            Post? commentPost = _messageService.GetPost(newComment.PostId);
-        
-            // Get user the comment was posted by, if it is null, throw an exception
-            ApplicationUser? commentUser = _messageService.GetUser(newComment.UserId);
+            // Check if post and user exist
+            bool postExists = _messageService.CheckObjectExists(newComment.PostId, "post-service");
+            bool userExists = _messageService.CheckObjectExists(newComment.UserId, "useridentityapi-service");
 
-            if (commentPost is null || commentUser is null )
+            if (!postExists || !userExists)
             {
                 throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
             }
