@@ -37,9 +37,11 @@ namespace post.Services
             // If exchange is "delete-post-comment", also publish message to Comments.Services.MessageService
             if (exchange == "delete-post-comment")
             {
+                // Create queue, the same as in Comments.Services.MessageService
                 var postQueue = channel.QueueDeclare("post", true, false, false);
                 var commentMessage = Encoding.UTF8.GetBytes(postJson);
-                Console.WriteLine("cm:" + commentMessage);
+
+                // Publish message to queue
                 channel.BasicPublish(exchange, "post", null, commentMessage);
                 return;
             }
@@ -51,7 +53,6 @@ namespace post.Services
 
             // Publish message to queue
             channel.BasicPublish(string.Empty, "events", null, message);
-            return;
         }
 
         public Task StartAsync(CancellationToken token)
