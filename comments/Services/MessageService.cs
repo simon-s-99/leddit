@@ -25,10 +25,13 @@ namespace Comments.Services
         // Notifies about certain events regarding comments, exchanges are passed to the method
         public void NotifyCommentChanged(string exchange, Comment comment)
         {
+            // Create queue, the same as in Logs.Services.MessageService
             var queue = channel.QueueDeclare("events", true, false, false);
+
             var commentJson = JsonSerializer.Serialize(comment);
             var message = Encoding.UTF8.GetBytes($"{exchange}: {commentJson}");
 
+            // Publish message to queue
             channel.BasicPublish(string.Empty, "events", null, message);
         }
 

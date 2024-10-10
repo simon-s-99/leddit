@@ -32,10 +32,13 @@ namespace userIdentityAPI.Services
         // A flexible method that can handle different DTOs based on the action
         public void NotifyUserEvent(string exchange, object dto)
         {
+            // Create queue, the same as in Logs.Services.MessageService
             var queue = _channel.QueueDeclare("events", true, false, false);
+
             var json = JsonSerializer.Serialize(dto);
             var message = Encoding.UTF8.GetBytes(json);
 
+            // Publish message to queue
             _channel.BasicPublish(string.Empty, "events", null, message);
             Console.WriteLine($"Message sent to exchange '{exchange}': {json}");
         }
