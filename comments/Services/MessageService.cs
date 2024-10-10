@@ -64,19 +64,26 @@ namespace Comments.Services
 
         private void ListenForMessages()
         {
-            channel.ExchangeDeclare("delete-post", ExchangeType.Fanout);
+            Console.WriteLine("In LFM");
+            channel.ExchangeDeclare("delete-post-comment", ExchangeType.Fanout);
             var queue = channel.QueueDeclare("post", true, false, false);
-            channel.QueueBind(queue, "delete-post", string.Empty);
+            channel.QueueBind(queue.QueueName, "delete-post-comment", string.Empty);
 
             var consumer = new EventingBasicConsumer(channel);
 
+            Console.WriteLine("Before CR");
+
             consumer.Received += (model, ea) =>
             {
+            Console.WriteLine("After CR");
+
                 var body = ea.Body.ToArray();
                 var json = Encoding.UTF8.GetString(body);
+                Console.WriteLine("json" + json);
 
                 try
                 {
+                    Console.WriteLine("in try");
                     // Get the post object
                     var post = JsonSerializer.Deserialize<Post>(json);
 
@@ -87,7 +94,7 @@ namespace Comments.Services
 
                         // Get all comments from the now deleted post
                         List<Comment> commentsToDelete = commentsService.GetCommentsFromPostId(post.Id);
-
+                        Console.WriteLine("cd:" + commentsToDelete);
                         // If post had no comments, return
                         if (commentsToDelete.Count == 0)
                         {

@@ -62,8 +62,9 @@ namespace post.Services
             _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
             _messageService.NotifyPostChanged("delete-post", post);
-        }
+            _messageService.NotifyPostChanged("delete-post-comment", post);
 
+        }
 
         public async Task<Post> GetPostAsync(Guid id)
         {

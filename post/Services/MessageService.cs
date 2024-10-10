@@ -26,25 +26,32 @@ namespace post.Services
             channel.ExchangeDeclare("add-post", ExchangeType.Fanout);
             channel.ExchangeDeclare("update-post", ExchangeType.Fanout);
             channel.ExchangeDeclare("delete-post", ExchangeType.Fanout);
+            channel.ExchangeDeclare("delete-post-comment", ExchangeType.Fanout);
+
         }
 
         public void NotifyPostChanged(string exchange, Post post)
         {
+            var postJson = JsonSerializer.Serialize(post);
+
+            // If exchange is "delete-post-comment", also publish message to Comments.Services.MessageService
+            if (exchange == "delete-post-comment")
+            {
+                var postQueue = channel.QueueDeclare("post", true, false, false);
+                var commentMessage = Encoding.UTF8.GetBytes(postJson);
+                Console.WriteLine("cm:" + commentMessage);
+                channel.BasicPublish(exchange, "post", null, commentMessage);
+                return;
+            }
+
             // Create queue, the same as in Logs.Services.MessageService
             var queue = channel.QueueDeclare("events", true, false, false);
 
-            var postJson = JsonSerializer.Serialize(post);
             var message = Encoding.UTF8.GetBytes($"{exchange}: {postJson}");
 
             // Publish message to queue
             channel.BasicPublish(string.Empty, "events", null, message);
-
-            // If exchange is "delete-post", also publish message to Comments.Services.MessageService
-            if (exchange == "delete-post")
-            {
-                var commentMessage = Encoding.UTF8.GetBytes(postJson);
-                channel.BasicPublish(string.Empty, "post", null, commentMessage);
-            }
+            return;
         }
 
         public Task StartAsync(CancellationToken token)
