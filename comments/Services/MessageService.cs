@@ -32,7 +32,7 @@ namespace Comments.Services
             var message = Encoding.UTF8.GetBytes($"{exchange}: {commentJson}");
 
             // Publish message to queue
-            channel.BasicPublish(string.Empty, "events", null, message);
+            channel.BasicPublish(exchange, "events", null, message);
         }
 
         public void Connect()
@@ -65,7 +65,7 @@ namespace Comments.Services
         private void ListenForMessages()
         {
             channel.ExchangeDeclare("delete-post-comment", ExchangeType.Fanout);
-            var queue = channel.QueueDeclare("post", true, false, false);
+            var queue = channel.QueueDeclare("posts", true, false, false);
             channel.QueueBind(queue.QueueName, "delete-post-comment", string.Empty);
 
             var consumer = new EventingBasicConsumer(channel);

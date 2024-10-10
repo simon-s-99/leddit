@@ -38,11 +38,11 @@ namespace post.Services
             if (exchange == "delete-post-comment")
             {
                 // Create queue, the same as in Comments.Services.MessageService
-                var postQueue = channel.QueueDeclare("post", true, false, false);
+                var postQueue = channel.QueueDeclare("posts", true, false, false);
                 var commentMessage = Encoding.UTF8.GetBytes(postJson);
 
                 // Publish message to queue
-                channel.BasicPublish(exchange, "post", null, commentMessage);
+                channel.BasicPublish(exchange, "posts", null, commentMessage);
                 return;
             }
 
@@ -52,7 +52,7 @@ namespace post.Services
             var message = Encoding.UTF8.GetBytes($"{exchange}: {postJson}");
 
             // Publish message to queue
-            channel.BasicPublish(string.Empty, "events", null, message);
+            channel.BasicPublish(exchange, "events", null, message);
         }
 
         public Task StartAsync(CancellationToken token)

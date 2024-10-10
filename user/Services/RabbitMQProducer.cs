@@ -39,7 +39,7 @@ namespace userIdentityAPI.Services
             var message = Encoding.UTF8.GetBytes(json);
 
             // Publish message to queue
-            _channel.BasicPublish(string.Empty, "events", null, message);
+            _channel.BasicPublish(exchange, "events", null, message);
             Console.WriteLine($"Message sent to exchange '{exchange}': {json}");
         }
 
