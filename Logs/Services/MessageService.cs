@@ -42,32 +42,32 @@ namespace Logs.Services
 
         private void ListenForMessages()
         {
-            channel.ExchangeDeclare("delete-post", ExchangeType.Fanout);
-            channel.ExchangeDeclare("add-post", ExchangeType.Fanout);
-            channel.ExchangeDeclare("update-post", ExchangeType.Fanout);
+            string[] exchanges = [
+                "delete-post",
+                "add-post",
+                "update-post",
+                "delete-comment",
+                "add-comment",
+                "edit-comment",
+                "delete-user",
+                "register-user",
+                "update-user",
+            ];
 
-            channel.ExchangeDeclare("delete-comment", ExchangeType.Fanout);
-            channel.ExchangeDeclare("add-comment", ExchangeType.Fanout);
-            channel.ExchangeDeclare("edit-comment", ExchangeType.Fanout);
+            // Declare nine different exchanges
+            foreach (string exchange in exchanges)
+            {
+                channel.ExchangeDeclare(exchange, ExchangeType.Fanout);
+            }
 
-            channel.ExchangeDeclare("delete-user", ExchangeType.Fanout);
-            channel.ExchangeDeclare("register-user", ExchangeType.Fanout);
-            channel.ExchangeDeclare("update-user", ExchangeType.Fanout);
-
-            // Declare new queue, which will handle all events
+            // Declare a new queue, which will handle all events relating to the exchanges
             var queue = channel.QueueDeclare("events", true, false, false);
 
-            channel.QueueBind(queue.QueueName, "delete-post", string.Empty);
-            channel.QueueBind(queue.QueueName, "add-post", string.Empty);
-            channel.QueueBind(queue.QueueName, "update-post", string.Empty);
-            
-            channel.QueueBind(queue.QueueName, "delete-comment", string.Empty);
-            channel.QueueBind(queue.QueueName, "add-comment", string.Empty);
-            channel.QueueBind(queue.QueueName, "edit-comment", string.Empty);
-
-            channel.QueueBind(queue.QueueName, "delete-user", string.Empty);
-            channel.QueueBind(queue.QueueName, "register-user", string.Empty);
-            channel.QueueBind(queue.QueueName, "update-user", string.Empty);
+            // Bind each exchange to the queue
+            foreach (string exchange in exchanges)
+            {
+                channel.QueueBind(queue.QueueName, exchange, string.Empty);
+            }
 
             var consumer = new EventingBasicConsumer(channel);
 
