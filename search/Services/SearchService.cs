@@ -81,8 +81,16 @@ namespace Search.Services
         public async void IndexDocument<T>(T document)
         {
             Console.WriteLine("We are here -> IndexDocument<T>() in SearchService");
+            Console.WriteLine("T is type = " + typeof(T));
+            //Console.WriteLine("Document is type = " + typeof(document));
             var response = await _client.IndexAsync<T>(document);
-            if (!response.IsValidResponse) { throw new ApplicationException("Invalid response from ES"); }
+            Console.WriteLine("Is valid response = " + response.IsValidResponse.ToString());
+            Console.WriteLine("Trying to write to index = " + response.Index.ToString());
+            Console.WriteLine("Response result is = " + response.Result.ToString());
+            if (!response.IsValidResponse)
+            {
+                throw new ArgumentException("Invalid Document passed to indexing or DB is unavailable.");
+            }
         }
 
         /// <summary>
