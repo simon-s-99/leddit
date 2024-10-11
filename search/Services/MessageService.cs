@@ -157,9 +157,9 @@ namespace Search.Services
                 _exchange.QueueBind(queue:
                     _exchange.QueueDeclare(queue:
                         queueName,
-                        durable: true,
+                        durable: false,
                         exclusive: false,
-                        autoDelete: false
+                        autoDelete: true
                     ),
                     exchange: exchangeName,
                     routingKey: string.Empty
