@@ -53,17 +53,16 @@ namespace Search.Services
         private void ListenForMessages()
         {
             Console.WriteLine("We are here -> ListenForMessages()");
-            string postQueue = "post";
-            string commentQueue = "comment";
-            string userQueue = "user";
 
             List<string> postExchanges = new(["add-post", "update-post", "delete-post"]);
             List<string> commentExchanges = new(["add-comment", "edit-comment", "delete-comment"]);
             List<string> userExchanges = new(["register-user", "update-user", "delete-user"]);
 
-            BindQueuesToExchanges(postExchanges, postQueue);
-            BindQueuesToExchanges(commentExchanges, commentQueue);
-            BindQueuesToExchanges(userExchanges, userQueue);
+            List<string> exchanges = [.. postExchanges, .. commentExchanges, .. userExchanges];
+
+            string queue = "events";
+
+            BindQueuesToExchanges(exchanges, queue);
 
             Console.WriteLine("We are here -> after bindQs");
 
@@ -139,9 +138,7 @@ namespace Search.Services
             };
 
             Console.WriteLine("We are here -> 1 line above basicconsume");
-            _exchange.BasicConsume(postQueue, true, consumer);
-            _exchange.BasicConsume(commentQueue, true, consumer);
-            _exchange.BasicConsume(userQueue, true, consumer);
+            _exchange.BasicConsume(queue, true, consumer);
             Console.WriteLine("We are here -> 1 line BELOW basicconsume");
         }
 
@@ -165,7 +162,7 @@ namespace Search.Services
                         autoDelete: false
                     ),
                     exchange: exchangeName,
-                    routingKey: ""
+                    routingKey: string.Empty
                 );
             }
         }
