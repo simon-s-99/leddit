@@ -78,6 +78,7 @@ namespace Search.Services
 
                 string body = ea.Body.ToString();
                 string json = JsonConvert.SerializeObject(body);
+                Console.WriteLine(json.ToString());
 
                 if (postExchanges.Contains(ea.Exchange)) // if exchange type belongs to post queue 
                 {
@@ -88,6 +89,7 @@ namespace Search.Services
 
                     using (var scope = _serviceProvider.CreateScope())
                     {
+                        Console.WriteLine("We are here -> in serviceprovides.CreateScope");
                         var searchService = scope.ServiceProvider.GetRequiredService<SearchService>();
                         try
                         {
@@ -104,11 +106,14 @@ namespace Search.Services
                 }
                 else if (commentExchanges.Contains(ea.Exchange)) // if exchange type belongs to comment queue
                 {
+                    Console.WriteLine("We are here -> in COMMENT if branch");
+
                     // Get the comment object
                     Comment comment = System.Text.Json.JsonSerializer.Deserialize<Comment>(json);
-
+                    Console.WriteLine(comment.ToString());
                     using (var scope = _serviceProvider.CreateScope())
                     {
+                        Console.WriteLine("We are here -> in serviceprovides.CreateScope");
                         var searchService = scope.ServiceProvider.GetRequiredService<SearchService>();
                         try
                         {
@@ -123,11 +128,16 @@ namespace Search.Services
                 }
                 else if (userExchanges.Contains(ea.Exchange)) // if exchange type belongs to user queue
                 {
+                    Console.WriteLine("We are here -> in USER if branch");
+
                     // Get the user object
                     ApplicationUser user = System.Text.Json.JsonSerializer.Deserialize<ApplicationUser>(json);
 
+                    Console.WriteLine(user.ToString());
+
                     using (var scope = _serviceProvider.CreateScope())
                     {
+                        Console.WriteLine("We are here -> in serviceprovides.CreateScope");
                         var searchService = scope.ServiceProvider.GetRequiredService<SearchService>();
                         try
                         {
