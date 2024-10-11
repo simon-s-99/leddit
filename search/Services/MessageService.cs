@@ -1,8 +1,7 @@
 ﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using LedditModels;
-using Newtonsoft.Json;
-using System.Threading.Channels;
+using System.Text;
 
 namespace Search.Services
 {
@@ -77,8 +76,8 @@ namespace Search.Services
             {
                 Console.WriteLine("We are here -> in consumer.Received");
 
-                string body = ea.Body.ToString();
-                string json = JsonConvert.SerializeObject(body);
+                var body = ea.Body.ToArray();
+                var json = Encoding.UTF8.GetString(body);
                 Console.WriteLine(json.ToString());
                 Console.WriteLine("json ==== " + json);
 
