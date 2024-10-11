@@ -60,8 +60,11 @@ namespace Search.Services
 
             List<string> exchanges = [.. postExchanges, .. commentExchanges, .. userExchanges];
 
-            // declare a server-name queue
-            var queue = _channel.QueueDeclare().QueueName;
+            // declare a server-name queue and get it's name as a variable
+            var queue = _channel.QueueDeclare(
+                        durable: true,
+                        exclusive: false,
+                        autoDelete: false).QueueName;
 
             BindQueuesToExchanges(exchanges, queue);
 
@@ -155,16 +158,7 @@ namespace Search.Services
             {
                 Console.WriteLine("We are here ->> This msg should appear 3-9 times");
                 _channel.ExchangeDeclare(exchangeName, ExchangeType.Fanout);
-                _channel.QueueBind(queue:
-                    _channel.QueueDeclare(queue:
-                        queueName,
-                        durable: true,
-                        exclusive: false,
-                        autoDelete: false
-                    ),
-                    exchange: exchangeName,
-                    routingKey: string.Empty
-                );
+                _channel.QueueBind(queue: queueName, exchange: exchangeName, routingKey: string.Empty);
             }
         }
     }
