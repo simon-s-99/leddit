@@ -26,8 +26,6 @@ namespace post.Services
             channel.ExchangeDeclare("add-post", ExchangeType.Fanout);
             channel.ExchangeDeclare("update-post", ExchangeType.Fanout);
             channel.ExchangeDeclare("delete-post", ExchangeType.Fanout);
-            channel.ExchangeDeclare("delete-post-comment", ExchangeType.Fanout);
-
         }
 
         public void NotifyPostChanged(string exchange, Post post)
@@ -35,7 +33,7 @@ namespace post.Services
             var postJson = JsonSerializer.Serialize(post);
 
             // If exchange is "delete-post-comment", also publish message to Comments.Services.MessageService
-            if (exchange == "delete-post-comment")
+            if (exchange == "delete-post")
             {
                 // Create queue, the same as in Comments.Services.MessageService
                 var postQueue = channel.QueueDeclare("posts", true, false, false);
@@ -43,7 +41,6 @@ namespace post.Services
 
                 // Publish message to queue
                 channel.BasicPublish(exchange, "posts", null, commentMessage);
-                return;
             }
 
             // Create queue, the same as in Logs.Services.MessageService
