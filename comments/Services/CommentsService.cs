@@ -43,6 +43,17 @@ namespace Comments.Services
                 throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
             }
 
+            // If comment is replying to a supposed comment, check that it actually exists
+            if (comment.ReplyTo is not null)
+            {
+                bool replyCommentExists = _context.Comments.Where(c => c.Id == comment.ReplyTo).Any();
+
+                if (!replyCommentExists)
+                {
+                    throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                }
+            }
+
             _context.Comments.Add(newComment);
             _context.SaveChanges();
 
