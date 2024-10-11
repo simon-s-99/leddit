@@ -35,7 +35,7 @@ namespace post.Services
             var postJson = JsonSerializer.Serialize(post);
 
             // If exchange is "delete-post-comment", also publish message to Comments.Services.MessageService
-            if (exchange == "delete-post-comment")
+            if (exchange == "delete-post")
             {
                 // Create queue, the same as in Comments.Services.MessageService
                 var postQueue = channel.QueueDeclare("posts", true, false, false);
@@ -43,7 +43,6 @@ namespace post.Services
 
                 // Publish message to queue
                 channel.BasicPublish(exchange, "posts", null, commentMessage);
-                return;
             }
 
             // Create queue, the same as in Logs.Services.MessageService

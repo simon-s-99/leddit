@@ -64,9 +64,9 @@ namespace Comments.Services
 
         private void ListenForMessages()
         {
-            channel.ExchangeDeclare("delete-post-comment", ExchangeType.Fanout);
+            channel.ExchangeDeclare("delete-post", ExchangeType.Fanout);
             var queue = channel.QueueDeclare("posts", true, false, false);
-            channel.QueueBind(queue.QueueName, "delete-post-comment", string.Empty);
+            channel.QueueBind(queue.QueueName, "delete-post", string.Empty);
 
             var consumer = new EventingBasicConsumer(channel);
 
