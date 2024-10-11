@@ -80,6 +80,7 @@ namespace Search.Services
                 string body = ea.Body.ToString();
                 string json = JsonConvert.SerializeObject(body);
                 Console.WriteLine(json.ToString());
+                Console.WriteLine("json ==== " + json);
 
                 if (postExchanges.Contains(ea.Exchange)) // if exchange type belongs to post queue 
                 {
