@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Logs.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class AfterDTORemoved : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
