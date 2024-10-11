@@ -20,6 +20,17 @@ namespace Logs
             builder.Services.AddSingleton(s => s.GetServices<IHostedService>().OfType<MessageService>().First());
 
             var app = builder.Build();
+
+            // ====== Migrate database on startup
+            // this works since we only run one instance of posts at a time
+            // this is generally not recommended for production deployments due to the instability it could cause
+            // Other solutions seem to require Helm which is outside of the scope of this assignment. 
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                db.Database.Migrate();
+            }
+
             app.Run();
         }
     }
