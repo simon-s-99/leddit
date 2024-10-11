@@ -46,7 +46,7 @@ namespace post.Services
             // Create queue, the same as in Logs.Services.MessageService
             var queue = channel.QueueDeclare("events", true, false, false);
 
-            var message = Encoding.UTF8.GetBytes($"{exchange}: {postJson}");
+            var message = Encoding.UTF8.GetBytes(postJson);
 
             // Publish message to queue
             channel.BasicPublish(exchange, "events", null, message);

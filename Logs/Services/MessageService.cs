@@ -67,9 +67,14 @@ namespace Logs.Services
 
             consumer.Received += (model, ea) =>
             {
+                if (ea is null)
+                {
+                    return;
+                }
+
                 var body = ea.Body.ToArray();
                 var json = Encoding.UTF8.GetString(body);
-                Console.WriteLine("Received: " + json);
+                Console.WriteLine($"Received - {ea.Exchange}: {json}");
 
                 try
                 {
@@ -80,7 +85,7 @@ namespace Logs.Services
 
                         Log newLog = new Log
                         {
-                            Body = json,
+                            Body = $"{ea.Exchange}: {json}",
                             CreatedDate = DateTime.UtcNow
                         };
 
