@@ -9,7 +9,7 @@ namespace Search.Services
     public class MessageService : IHostedService
     {
         private IConnection? _connection;
-        private IModel? _exchange; // _exchange
+        private IModel? _channel; // _channel
         private IServiceProvider? _serviceProvider;
 
         public MessageService(IServiceProvider? serviceProvider)
@@ -29,7 +29,7 @@ namespace Search.Services
         public Task StopAsync(CancellationToken token)
         {
             Console.WriteLine("We are here -> stopasync of msgservice");
-            _exchange?.Close();
+            _channel?.Close();
             _connection?.Close();
 
             return Task.CompletedTask;
@@ -47,7 +47,7 @@ namespace Search.Services
             };
 
             _connection = connectionFactory.CreateConnection();
-            _exchange = _connection.CreateModel();
+            _channel = _connection.CreateModel();
         }
 
         private void ListenForMessages()
@@ -60,13 +60,14 @@ namespace Search.Services
 
             List<string> exchanges = [.. postExchanges, .. commentExchanges, .. userExchanges];
 
-            string queue = "events";
+            // declare a server-name queue
+            var queue = _channel.QueueDeclare().QueueName;
 
             BindQueuesToExchanges(exchanges, queue);
 
             Console.WriteLine("We are here -> after bindQs");
-
-            var consumer = new EventingBasicConsumer(_exchange);
+            
+            var consumer = new EventingBasicConsumer(_channel);
 
             consumer.Received += (model, ea) =>
             {
@@ -138,7 +139,7 @@ namespace Search.Services
             };
 
             Console.WriteLine("We are here -> 1 line above basicconsume");
-            _exchange.BasicConsume(queue, true, consumer);
+            _channel.BasicConsume(queue, true, consumer);
             Console.WriteLine("We are here -> 1 line BELOW basicconsume");
         }
 
@@ -147,15 +148,15 @@ namespace Search.Services
         /// </summary>
         /// <param name="exchangeNames">Names of declared exchanges to bind to queue.</param>
         /// <param name="queueName">Name of queue that exchanges will bind to.</param>
-        private void BindQueuesToExchanges(List<string> exchangeNames, string queueName)
+        private void BindQueuesToExchanges(List<string> exchangeNames, string? queueName)
         {
             Console.WriteLine("We are here -> binqstoExchanges");
             foreach (string exchangeName in exchangeNames)
             {
                 Console.WriteLine("We are here ->> This msg should appear 3-9 times");
-                _exchange.ExchangeDeclare(exchangeName, ExchangeType.Fanout);
-                _exchange.QueueBind(queue:
-                    _exchange.QueueDeclare(queue:
+                _channel.ExchangeDeclare(exchangeName, ExchangeType.Fanout);
+                _channel.QueueBind(queue:
+                    _channel.QueueDeclare(queue:
                         queueName,
                         durable: true,
                         exclusive: false,
