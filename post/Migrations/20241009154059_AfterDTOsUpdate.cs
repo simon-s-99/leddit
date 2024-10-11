@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace post.Migrations
 {
     /// <inheritdoc />
-    public partial class AfterAnnotations : Migration
+    public partial class AfterDTOsUpdate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

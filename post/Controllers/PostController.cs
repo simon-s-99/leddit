@@ -23,6 +23,10 @@ namespace post.Controllers
                 var postId = await _postService.CreatePostAsync(dto);
                 return StatusCode(201, new { Id = postId });
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
             catch (System.Exception ex)
             {
                 return BadRequest(new { Error = ex.Message });
@@ -49,7 +53,7 @@ namespace post.Controllers
             try
             {
                 await _postService.DeletePostAsync(id);
-                return NoContent();  
+                return NoContent();
             }
             catch (System.Exception ex)
             {

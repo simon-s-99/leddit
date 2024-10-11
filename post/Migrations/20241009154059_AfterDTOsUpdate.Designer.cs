@@ -12,8 +12,8 @@ using post.Data;
 namespace post.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241002145720_AfterAnnotations")]
-    partial class AfterAnnotations
+    [Migration("20241009154059_AfterDTOsUpdate")]
+    partial class AfterDTOsUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
