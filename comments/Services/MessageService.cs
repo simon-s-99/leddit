@@ -29,7 +29,7 @@ namespace Comments.Services
             var queue = channel.QueueDeclare("events", true, false, false);
 
             var commentJson = JsonSerializer.Serialize(comment);
-            var message = Encoding.UTF8.GetBytes($"{exchange}: {commentJson}");
+            var message = Encoding.UTF8.GetBytes(commentJson);
 
             // Publish message to queue
             channel.BasicPublish(exchange, "events", null, message);
