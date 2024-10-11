@@ -44,4 +44,4 @@ spec:
       protocol: TCP
       port: 15672
       targetPort: 15672
-  type: NodePort # Makes sure the service cannot receive external requests
+  type: ClusterIP # Makes sure the service cannot receive external requests

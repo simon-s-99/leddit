@@ -3,7 +3,6 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
-using Logs.DTOs;
 
 namespace Logs.Services
 {
@@ -54,18 +53,13 @@ namespace Logs.Services
                 "update-user",
             ];
 
-            // Declare nine different exchanges
-            foreach (string exchange in exchanges)
-            {
-                channel.ExchangeDeclare(exchange, ExchangeType.Fanout);
-            }
-
             // Declare a new queue, which will handle all events relating to the exchanges
             var queue = channel.QueueDeclare("events", true, false, false);
 
-            // Bind each exchange to the queue
+            // Declare nine different exchanges, and bind each of them to the queue
             foreach (string exchange in exchanges)
             {
+                channel.ExchangeDeclare(exchange, ExchangeType.Fanout);
                 channel.QueueBind(queue.QueueName, exchange, string.Empty);
             }
 
@@ -84,7 +78,7 @@ namespace Logs.Services
                         // Create LogsService scope
                         var logsService = scope.ServiceProvider.GetService<LogsService>();
 
-                        AddLogDTO newLog = new AddLogDTO
+                        Log newLog = new Log
                         {
                             Body = json,
                             CreatedDate = DateTime.UtcNow

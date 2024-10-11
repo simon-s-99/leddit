@@ -78,7 +78,6 @@ namespace Comments.Services
 
                 try
                 {
-                    Console.WriteLine("in try");
                     // Get the post object
                     var post = JsonSerializer.Deserialize<Post>(json);
 

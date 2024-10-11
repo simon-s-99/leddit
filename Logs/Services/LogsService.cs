@@ -1,6 +1,5 @@
 ﻿using Logs.Repository;
 using LedditModels;
-using Logs.DTOs;
 
 namespace Logs.Services
 {
@@ -15,18 +14,11 @@ namespace Logs.Services
             _messageService = messageService;
         }
 
-        public Log AddLog(AddLogDTO log)
+        public Log AddLog(Log log)
         {
-            Log newLog = new Log
-            {
-                Body = log.Body,
-                CreatedDate = log.CreatedDate,
-            };
-
-            _context.Logs.Add(newLog);
+            _context.Logs.Add(log);
             _context.SaveChanges();
-
-            return newLog;
+            return log;
         }
 
     }
