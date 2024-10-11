@@ -65,7 +65,8 @@ namespace Search.Services
                         durable: true,
                         exclusive: false,
                         autoDelete: false).QueueName;
-
+            Console.WriteLine(queue.ToString());
+            Console.WriteLine(queue);
             BindQueuesToExchanges(exchanges, queue);
 
             Console.WriteLine("We are here -> after bindQs");
