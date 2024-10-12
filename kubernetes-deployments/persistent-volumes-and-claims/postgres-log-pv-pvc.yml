@@ -1,21 +1,21 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: postgres-logs-pv
+  name: postgres-log-pv
 spec:
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data/postgres-logs"
+    path: "/mnt/data/postgres-log"
 
 ---
 
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-logs-pvc
+  name: postgres-log-pvc
 spec:
   accessModes:
     - ReadWriteOnce
