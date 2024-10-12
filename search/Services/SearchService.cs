@@ -1,25 +1,23 @@
 ﻿using Elastic.Clients.Elasticsearch;
-using Newtonsoft.Json;
 using LedditModels;
 
 namespace Search.Services
 {
     public class SearchService
     {
-        private ElasticsearchClient _client;
+        private readonly IElasticsearchClientSettings _elasticsearchClientSettings;
 
         public SearchService(IElasticsearchClientSettings elasticsearchClientSettings)
         {
-            // ElasticClient is thread-safe and does not implement IDispose
-            _client = new ElasticsearchClient(elasticsearchClientSettings);
+            _elasticsearchClientSettings = elasticsearchClientSettings;
         }
 
         public async Task<List<List<string>>> SearchAsync(string searchTerm)
         {
-            // stores results in list of JSON strings
-            List<List<string>> searchResults = new();
+            // ElasticClient is thread-safe and does not implement IDispose
+            var client = new ElasticsearchClient(_elasticsearchClientSettings);
 
-            var postSearchResponse = await _client.SearchAsync<Post>(s => s
+            var postSearchResponse = await client.SearchAsync<Post>(s => s
                 .From(0) // provides 0 -->
                 .Size(5) // --> to 5 hits
                 .Query(q => q
@@ -31,7 +29,7 @@ namespace Search.Services
                 )
             );
 
-            var commentSearchResponse = await _client.SearchAsync<Comment>(s => s
+            var commentSearchResponse = await client.SearchAsync<Comment>(s => s
                 .From(0) // provides 0 -->
                 .Size(5) // --> to 5 hits
                 .Query(q => q
@@ -43,36 +41,30 @@ namespace Search.Services
                 )
             );
 
-            var userSearchResponse = await _client.SearchAsync<ApplicationUser>(s => s
+            var userSearchResponse = await client.SearchAsync<ApplicationUser>(s => s
                 .From(0) // provides 0 -->
                 .Size(5) // --> to 5 hits
                 .Query(q => q
                     .MatchPhrasePrefix(m => m
-                        .Field(f => f.DisplayName)
+                        .Field(f => f.Email)
                         .Query(searchTerm)
                         .Slop(2) // how many positions a word can be moved for a match
                     )
                 )
             );
 
-            //Console.WriteLine(commentSearchResponse.DebugInformation); // for debugging
+            //Console.WriteLine("SearchResponses debug info :");
+            //Console.WriteLine("Comments = " + commentSearchResponse.DebugInformation); // for debugging
+            //Console.WriteLine("Posts = " + postSearchResponse.DebugInformation); // for debugging
+            //Console.WriteLine("Users = " + userSearchResponse.DebugInformation); // for debugging
 
             // Add responses formatted to json in returnvalue
-            List<string> postSearchResults = new();
-            List<string> commentSearchResults = new();
-            List<string> userSearchResults = new();
+            List<string> postSearchResults = new(["Type: Posts", .. ResponseToJson<Post>(postSearchResponse)]);
+            List<string> commentSearchResults = new(["Type: Comments", .. ResponseToJson<Comment>(commentSearchResponse)]);
+            List<string> userSearchResults = new(["Type: Users", .. ResponseToJson<ApplicationUser>(userSearchResponse)]);
 
-            postSearchResults.Add("Type: Posts");
-            commentSearchResults.Add("Type: Comments");
-            userSearchResults.Add("Type: Users");
-
-            postSearchResults.AddRange(ResponseToJson<Post>(postSearchResponse));
-            commentSearchResults.AddRange(ResponseToJson<Comment>(commentSearchResponse));
-            userSearchResults.AddRange(ResponseToJson<ApplicationUser>(userSearchResponse));
-
-            searchResults.Add(postSearchResults);
-            searchResults.Add(commentSearchResults);
-            searchResults.Add(userSearchResults);
+            // stores results in 2 dimensional list of JSON strings
+            List<List<string>> searchResults = new([[.. postSearchResults], [.. commentSearchResults], [.. userSearchResults]]);
 
             return searchResults;
         }
@@ -80,13 +72,11 @@ namespace Search.Services
         // add/index a document in elasticsearch db 
         public async void IndexDocument<T>(T document)
         {
-            Console.WriteLine("We are here -> IndexDocument<T>() in SearchService");
-            Console.WriteLine("T is type = " + typeof(T));
-            //Console.WriteLine("Document is type = " + typeof(document));
-            var response = await _client.IndexAsync<T>(document);
-            Console.WriteLine("Is valid response = " + response.IsValidResponse.ToString());
-            Console.WriteLine("Trying to write to index = " + response.Index.ToString());
-            Console.WriteLine("Response result is = " + response.Result.ToString());
+            // ElasticClient is thread-safe and does not implement IDispose
+            var client = new ElasticsearchClient(_elasticsearchClientSettings);
+
+            var response = await client.IndexAsync<T>(document);
+
             if (!response.IsValidResponse)
             {
                 throw new ArgumentException("Invalid Document passed to indexing or DB is unavailable.");
@@ -114,7 +104,7 @@ namespace Search.Services
                 {
                     foreach (var response in searchResponse.Documents)
                     {
-                        string jsonResponse = JsonConvert.SerializeObject(response);
+                        string jsonResponse = System.Text.Json.JsonSerializer.Serialize(response);
                         results.Add(jsonResponse);
                     }
                 }

@@ -10,7 +10,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.15.9" />
-		<PackageReference Include="newtonsoft.json" Version="13.0.3" />
 		<PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
 	</ItemGroup>
 
