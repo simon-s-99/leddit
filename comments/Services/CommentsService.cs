@@ -35,8 +35,8 @@ namespace Comments.Services
             };
 
             // Check if post and user exist
-            bool postExists = _messageService.CheckObjectExists(newComment.PostId, "post-service");
-            bool userExists = _messageService.CheckObjectExists(newComment.UserId, "useridentityapi-service");
+            bool postExists = _messageService.CheckObjectExists(newComment.PostId, "post-api-svc");
+            bool userExists = _messageService.CheckObjectExists(newComment.UserId, "user-api-svc");
 
             if (!postExists || !userExists)
             {

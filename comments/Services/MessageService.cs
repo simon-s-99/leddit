@@ -126,7 +126,7 @@ namespace Comments.Services
 
             // Declare new http request based on passed service
             HttpRequestMessage request = new HttpRequestMessage(
-                HttpMethod.Get, service == "post-service" ? 
+                HttpMethod.Get, service == "post-api-svc" ? 
                 "api/posts?id=" + id : 
                 "api/user/userid/" + id
             );
