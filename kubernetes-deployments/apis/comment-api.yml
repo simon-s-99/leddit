@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: comments-deployment
+  name: comment-api
   labels:
-    app: comments
+    app: comment-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: comments
+      app: comment-api
   template:
     metadata:
       labels:
-        app: comments
+        app: comment-api
     spec:
       containers:
-        - name: comments-container
-          image: docker.io/library/comments-image:latest
+        - name: comment-api
+          image: docker.io/library/comment-api:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
