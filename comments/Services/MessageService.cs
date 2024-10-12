@@ -38,7 +38,7 @@ namespace Comments.Services
         public void Connect()
         {
             // Use default username and password to connect
-            var connectionFactory = new ConnectionFactory { HostName = "rabbit-service", Port = 5672, UserName = "guest", Password = "guest" };
+            var connectionFactory = new ConnectionFactory { HostName = "rabbit-svc", Port = 5672, UserName = "guest", Password = "guest" };
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
 

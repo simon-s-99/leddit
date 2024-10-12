@@ -14,7 +14,7 @@ namespace post.Services
         {
             var connectionFactory = new ConnectionFactory
             {
-                HostName = "rabbit-service",
+                HostName = "rabbit-svc",
                 Port = 5672,
                 UserName = "guest",
                 Password = "guest"
