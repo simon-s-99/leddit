@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-comments-deployment
+  name: postgres-comment-deployment
   labels:
-    app: postgres-comments
+    app: postgres-comment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-comments
+      app: postgres-comment
   template:
     metadata:
       labels:
-        app: postgres-comments
+        app: postgres-comment
     spec:
       containers:
-      - name: postgres-comments-container
+      - name: postgres-comment-container
         image: postgres
         imagePullPolicy: Always
         ports:
@@ -27,19 +27,19 @@ spec:
             value: postgres
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
-          name: postgres-comments-pv
+          name: postgres-comment-pv
       volumes: #Register volume and volume claim
-      - name: postgres-comments-pv
+      - name: postgres-comment-pv
         persistentVolumeClaim:
-          claimName: postgres-comments-pvc
+          claimName: postgres-comment-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-comments-service
+  name: postgres-comment-service
 spec:
   selector:
-    app: postgres-comments
+    app: postgres-comment
   ports:
     - protocol: TCP
       port: 5432
