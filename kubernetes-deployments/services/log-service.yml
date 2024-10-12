@@ -4,7 +4,7 @@ metadata:
   name: log-svc
 spec:
   selector:
-    app: log-api
+    app: log
   ports:
     - appProtocol: http
       protocol: TCP
