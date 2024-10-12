@@ -1,7 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-post-svc
+spec:
+  selector:
+    app: postgres-post
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP # Makes sure the service cannot receive external requests
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-post-deployment
+  name: postgres-post
   labels:
     app: postgres-post
 spec:
@@ -15,7 +30,7 @@ spec:
         app: postgres-post
     spec:
       containers:
-      - name: postgres-post-container
+      - name: postgres-post
         image: postgres
         imagePullPolicy: Always
         ports:
@@ -32,16 +47,3 @@ spec:
       - name: postgres-post-pv
         persistentVolumeClaim:
           claimName: postgres-post-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-post-service
-spec:
-  selector:
-    app: postgres-post
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
-  type: ClusterIP # Makes sure the service cannot receive external requests
