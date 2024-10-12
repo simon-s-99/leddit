@@ -6,7 +6,7 @@ using Comments.DTOs;
 namespace Comments.Controllers
 {
     [ApiController]
-    [Route("/comments")]
+    [Route("api/[controller]")]
     public class CommentsController : ControllerBase
     {
         private readonly CommentsService _service;

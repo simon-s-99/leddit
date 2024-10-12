@@ -9,7 +9,7 @@ spec:
   - matches:
     - path:
         type: PathPrefix
-        value: /comment
+        value: /api/comments
     backendRefs:
     - name: comment-api-svc
       port: 8080

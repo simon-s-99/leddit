@@ -9,7 +9,7 @@ spec:
   - matches:
     - path:
         type: PathPrefix
-        value: /search
+        value: /api/search
     backendRefs:
     - name: search-api-svc
       port: 9201

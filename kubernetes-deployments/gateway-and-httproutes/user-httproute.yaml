@@ -9,7 +9,7 @@ spec:
     - matches:
         - path:
             type: PathPrefix
-            value: /user
+            value: /api/user
       backendRefs:
         - name: user-api-svc
           port: 8080
