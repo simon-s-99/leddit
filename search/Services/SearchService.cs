@@ -1,20 +1,21 @@
 ﻿using Elastic.Clients.Elasticsearch;
-using Newtonsoft.Json;
 using LedditModels;
 
 namespace Search.Services
 {
-    public static class SearchService
+    public class SearchService
     {
-        public static async Task<List<List<string>>> SearchAsync(
-            IElasticsearchClientSettings elasticsearchClientSettings,
-            string searchTerm)
+        private readonly IElasticsearchClientSettings _elasticsearchClientSettings;
+
+        public SearchService(IElasticsearchClientSettings elasticsearchClientSettings)
+        {
+            _elasticsearchClientSettings = elasticsearchClientSettings;
+        }
+
+        public async Task<List<List<string>>> SearchAsync(string searchTerm)
         {
             // ElasticClient is thread-safe and does not implement IDispose
-            var client = new ElasticsearchClient(elasticsearchClientSettings);
-
-            // stores results in list of JSON strings
-            List<List<string>> searchResults = new();
+            var client = new ElasticsearchClient(_elasticsearchClientSettings);
 
             var postSearchResponse = await client.SearchAsync<Post>(s => s
                 .From(0) // provides 0 -->
@@ -45,33 +46,41 @@ namespace Search.Services
                 .Size(5) // --> to 5 hits
                 .Query(q => q
                     .MatchPhrasePrefix(m => m
-                        .Field(f => f.DisplayName)
+                        .Field(f => f.Email)
                         .Query(searchTerm)
                         .Slop(2) // how many positions a word can be moved for a match
                     )
                 )
             );
 
-            //Console.WriteLine(commentSearchResponse.DebugInformation); // for debugging
+            //Console.WriteLine("SearchResponses debug info :");
+            //Console.WriteLine("Comments = " + commentSearchResponse.DebugInformation); // for debugging
+            //Console.WriteLine("Posts = " + postSearchResponse.DebugInformation); // for debugging
+            //Console.WriteLine("Users = " + userSearchResponse.DebugInformation); // for debugging
 
             // Add responses formatted to json in returnvalue
-            List<string> postSearchResults = new();
-            List<string> commentSearchResults = new();
-            List<string> userSearchResults = new();
+            List<string> postSearchResults = new(["Type: Posts", .. ResponseToJson<Post>(postSearchResponse)]);
+            List<string> commentSearchResults = new(["Type: Comments", .. ResponseToJson<Comment>(commentSearchResponse)]);
+            List<string> userSearchResults = new(["Type: Users", .. ResponseToJson<ApplicationUser>(userSearchResponse)]);
 
-            postSearchResults.Add("Type: Posts");
-            commentSearchResults.Add("Type: Comments");
-            userSearchResults.Add("Type: Users");
-
-            postSearchResults.AddRange(ResponseToJson<Post>(postSearchResponse));
-            commentSearchResults.AddRange(ResponseToJson<Comment>(commentSearchResponse));
-            userSearchResults.AddRange(ResponseToJson<ApplicationUser>(userSearchResponse));
-
-            searchResults.Add(postSearchResults);
-            searchResults.Add(commentSearchResults);
-            searchResults.Add(userSearchResults);
+            // stores results in 2 dimensional list of JSON strings
+            List<List<string>> searchResults = new([[.. postSearchResults], [.. commentSearchResults], [.. userSearchResults]]);
 
             return searchResults;
+        }
+
+        // add/index a document in elasticsearch db 
+        public async void IndexDocument<T>(T document)
+        {
+            // ElasticClient is thread-safe and does not implement IDispose
+            var client = new ElasticsearchClient(_elasticsearchClientSettings);
+
+            var response = await client.IndexAsync<T>(document);
+
+            if (!response.IsValidResponse)
+            {
+                throw new ArgumentException("Invalid Document passed to indexing or DB is unavailable.");
+            }
         }
 
         /// <summary>
@@ -80,7 +89,7 @@ namespace Search.Services
         /// <typeparam name="T"></typeparam>
         /// <param name="searchResponse"></param>
         /// <returns>A list of responses formatted as JSON-strings.</returns>
-        internal static List<string> ResponseToJson<T>(SearchResponse<T> searchResponse)
+        internal List<string> ResponseToJson<T>(SearchResponse<T> searchResponse)
         {
             // Stores results 
             List<string> results = new();
@@ -95,7 +104,7 @@ namespace Search.Services
                 {
                     foreach (var response in searchResponse.Documents)
                     {
-                        string jsonResponse = JsonConvert.SerializeObject(response);
+                        string jsonResponse = System.Text.Json.JsonSerializer.Serialize(response);
                         results.Add(jsonResponse);
                     }
                 }
