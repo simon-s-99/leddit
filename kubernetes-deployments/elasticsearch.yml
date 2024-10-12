@@ -67,6 +67,12 @@ spec:
               value: 'dev' # obviously change this for a production deployment 
             - name: discovery.type
               value: single-node
+            - name: xpack.security.transport.ssl.enabled # disables ssl for our dev environment
+              value: 'false'                             # ssl should be used in prod environment
+            - name: xpack.security.http.ssl.enabled
+              value: 'false'
+            - name: xpack.license.self_generated.type # skips 30-day premium ES trial
+              value: basic
             - name: bootstrap.memory_lock # tells elasticsearch to not switch from RAM to disk storage 
               value: 'true'
             - name: ES_JAVA_OPTS # caps RAM usage at 2GB 
