@@ -11,5 +11,5 @@ spec:
         type: PathPrefix
         value: /comment
     backendRefs:
-    - name: comment-svc
+    - name: comment-api-svc
       port: 8080

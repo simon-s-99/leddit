@@ -11,5 +11,5 @@ spec:
         type: PathPrefix
         value: /api/posts
     backendRefs:
-    - name: post-svc
+    - name: post-api-svc
       port: 8080
