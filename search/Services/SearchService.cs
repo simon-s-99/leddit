@@ -86,12 +86,12 @@ namespace Search.Services
         }
 
         // update a document in elasticsearch db 
-        public async void UpdateDocument<T>(T document) where T : class
+        public async void UpdateDocument<T>(Guid documentId, T document) where T : class
         {
             // ElasticClient is thread-safe and does not implement IDispose
             var client = new ElasticsearchClient(_elasticsearchClientSettings);
 
-            var response = await client.UpdateAsync<T, T>(document);
+            var response = await client.UpdateAsync<T, T>(documentId, u => u.Doc(document));
 
             if (!response.IsValidResponse)
             {
