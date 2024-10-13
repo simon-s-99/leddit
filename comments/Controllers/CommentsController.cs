@@ -59,5 +59,12 @@ namespace Comments.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("crash")]
+        public IActionResult CrashApp()
+        {
+            Environment.Exit(1);
+            return Ok("App crashed successfully");
+        }
     }
 }

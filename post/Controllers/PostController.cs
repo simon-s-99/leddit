@@ -74,6 +74,13 @@ namespace post.Controllers
                 return NotFound(new { Error = ex.Message });
             }
         }
+
+        [HttpGet("crash")]
+        public IActionResult CrashApp()
+        {
+            Environment.Exit(1);
+            return Ok("App crashed successfully");
+        }
     }
 }
 

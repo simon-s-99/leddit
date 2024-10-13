@@ -25,5 +25,12 @@ namespace Search.Controllers
 
             return searchResults;
         }
+
+        [HttpGet("crash")]
+        public IActionResult CrashApp()
+        {
+            Environment.Exit(1);
+            return Ok("App crashed successfully");
+        }
     }
 }
