@@ -1,18 +1,18 @@
 meta {
   name: registerUser
   type: http
-  seq: 9
+  seq: 2
 }
 
 post {
-  url: http://127.0.0.1:51365/api/user/register
+  url: http://127.0.0.1/api/user/register
   body: json
   auth: none
 }
 
 body:json {
   {
-   "username": "myusername",
+    "username": "myusername",
     "email": "myemail@example.com",
     "password": "mypa3ssAword"
   }

@@ -1,0 +1,15 @@
+meta {
+  name: getUserProfile
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://127.0.0.1/api/user/profile/:username
+  body: none
+  auth: none
+}
+
+params:path {
+  username: myusername
+}
