@@ -70,7 +70,7 @@ namespace Search.Services
         }
 
         // add/index a document in elasticsearch db 
-        public async void IndexDocument<T>(T document)
+        public async void IndexDocument<T>(T document) where T : class
         {
             // ElasticClient is thread-safe and does not implement IDispose
             var client = new ElasticsearchClient(_elasticsearchClientSettings);
@@ -86,7 +86,7 @@ namespace Search.Services
         }
 
         // update a document in elasticsearch db 
-        public async void UpdateDocument<T>(T document)
+        public async void UpdateDocument<T>(T document) where T : class
         {
             // ElasticClient is thread-safe and does not implement IDispose
             var client = new ElasticsearchClient(_elasticsearchClientSettings);
@@ -102,7 +102,7 @@ namespace Search.Services
         }
 
         // delete a document in elasticsearch db 
-        public async void DeleteDocument<T>(T document)
+        public async void DeleteDocument<T>(T document) where T : class
         {
             // ElasticClient is thread-safe and does not implement IDispose
             var client = new ElasticsearchClient(_elasticsearchClientSettings);
