@@ -53,13 +53,13 @@ namespace Logs.Services
             ];
 
             // Declare a new queue, which will handle all events relating to the exchanges
-            var queue = channel.QueueDeclare("events", true, false, false);
+            var queue = channel.QueueDeclare(durable: true, exclusive: false, autoDelete: false).QueueName;
 
             // Declare nine different exchanges, and bind each of them to the queue
             foreach (string exchange in exchanges)
             {
                 channel.ExchangeDeclare(exchange, ExchangeType.Fanout);
-                channel.QueueBind(queue.QueueName, exchange, string.Empty);
+                channel.QueueBind(queue, exchange, string.Empty);
             }
 
             var consumer = new EventingBasicConsumer(channel);
