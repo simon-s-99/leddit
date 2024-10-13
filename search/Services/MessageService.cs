@@ -78,10 +78,10 @@ namespace Search.Services
 
                     try
                     {
-                        // 1 = add | 2 = update | 3 = delete
-                        if (postExchanges[1] == ea.Exchange) { searchService.IndexDocument<Post>(post); }
-                        else if (postExchanges[2] == ea.Exchange) { searchService.UpdateDocument<Post>(post); }
-                        else if (postExchanges[3] == ea.Exchange) { searchService.DeleteDocument<Post>(post); }
+                        // 0 = add | 1 = update | 2 = delete
+                        if (postExchanges[0] == ea.Exchange) { searchService.IndexDocument<Post>(post); }
+                        else if (postExchanges[1] == ea.Exchange) { searchService.UpdateDocument<Post>(post); }
+                        else if (postExchanges[2] == ea.Exchange) { searchService.DeleteDocument<Post>(post); }
                     }
                     catch (Exception ex)
                     {
@@ -95,10 +95,10 @@ namespace Search.Services
 
                     try
                     {
-                        // 1 = add | 2 = update | 3 = delete
-                        if (commentExchanges[1] == ea.Exchange) { searchService.IndexDocument<Comment>(comment); }
-                        else if (commentExchanges[2] == ea.Exchange) { searchService.UpdateDocument<Comment>(comment); }
-                        else if (commentExchanges[3] == ea.Exchange) { searchService.DeleteDocument<Comment>(comment); }
+                        // 0 = add | 1 = update | 2 = delete
+                        if (commentExchanges[0] == ea.Exchange) { searchService.IndexDocument<Comment>(comment); }
+                        else if (commentExchanges[1] == ea.Exchange) { searchService.UpdateDocument<Comment>(comment); }
+                        else if (commentExchanges[2] == ea.Exchange) { searchService.DeleteDocument<Comment>(comment); }
                     }
                     catch (Exception ex)
                     {
@@ -112,10 +112,10 @@ namespace Search.Services
 
                     try
                     {
-                        // 1 = add | 2 = update | 3 = delete
-                        if (userExchanges[1] == ea.Exchange) { searchService.IndexDocument<ApplicationUser>(user); }
-                        else if (userExchanges[2] == ea.Exchange) { searchService.UpdateDocument<ApplicationUser>(user); }
-                        else if (userExchanges[3] == ea.Exchange) { searchService.DeleteDocument<ApplicationUser>(user); }
+                        // 0 = add | 1 = update | 2 = delete
+                        if (userExchanges[0] == ea.Exchange) { searchService.IndexDocument<ApplicationUser>(user); }
+                        else if (userExchanges[1] == ea.Exchange) { searchService.UpdateDocument<ApplicationUser>(user); }
+                        else if (userExchanges[2] == ea.Exchange) { searchService.DeleteDocument<ApplicationUser>(user); }
                     }
                     catch (Exception ex)
                     {
