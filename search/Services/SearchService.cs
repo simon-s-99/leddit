@@ -70,7 +70,7 @@ namespace Search.Services
         }
 
         // add/index a document in elasticsearch db 
-        public async void IndexDocument<T>(T document)
+        public async void IndexDocument<T>(T document) where T : class
         {
             // ElasticClient is thread-safe and does not implement IDispose
             var client = new ElasticsearchClient(_elasticsearchClientSettings);
@@ -79,7 +79,41 @@ namespace Search.Services
 
             if (!response.IsValidResponse)
             {
-                throw new ArgumentException("Invalid Document passed to indexing or DB is unavailable.");
+                throw new ArgumentException(
+                    "Invalid Document passed to ElasticClient for indexing or DB is unavailable."
+                );
+            }
+        }
+
+        // update a document in elasticsearch db 
+        public async void UpdateDocument<T>(Guid documentId, T document) where T : class
+        {
+            // ElasticClient is thread-safe and does not implement IDispose
+            var client = new ElasticsearchClient(_elasticsearchClientSettings);
+
+            var response = await client.UpdateAsync<T, T>(documentId, u => u.Doc(document));
+
+            if (!response.IsValidResponse)
+            {
+                throw new ArgumentException(
+                    "Invalid Document passed to ElasticClient for updating or DB is unavailable."
+                );
+            }
+        }
+
+        // delete a document in elasticsearch db 
+        public async void DeleteDocument<T>(T document) where T : class
+        {
+            // ElasticClient is thread-safe and does not implement IDispose
+            var client = new ElasticsearchClient(_elasticsearchClientSettings);
+
+            var response = await client.DeleteAsync<T>(document);
+
+            if (!response.IsValidResponse)
+            {
+                throw new ArgumentException(
+                    "Invalid Document passed to ElasticClient for deletion or DB is unavailable."
+                );
             }
         }
 
