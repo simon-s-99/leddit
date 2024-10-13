@@ -38,7 +38,7 @@ namespace Comments.Services
         public void Connect()
         {
             // Use default username and password to connect
-            var connectionFactory = new ConnectionFactory { HostName = "rabbit-service", Port = 5672, UserName = "guest", Password = "guest" };
+            var connectionFactory = new ConnectionFactory { HostName = "rabbit-svc", Port = 5672, UserName = "guest", Password = "guest" };
             connection = connectionFactory.CreateConnection();
             channel = connection.CreateModel();
 
@@ -126,7 +126,7 @@ namespace Comments.Services
 
             // Declare new http request based on passed service
             HttpRequestMessage request = new HttpRequestMessage(
-                HttpMethod.Get, service == "post-service" ? 
+                HttpMethod.Get, service == "post-api-svc" ? 
                 "api/posts?id=" + id : 
                 "api/user/userid/" + id
             );

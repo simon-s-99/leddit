@@ -5,7 +5,7 @@ using post.DTOs;
 namespace post.Controllers
 {
     [ApiController]
-    [Route("api/posts")]
+    [Route("api/[controller]")]
     public class PostsController : ControllerBase
     {
         private readonly PostService _postService;

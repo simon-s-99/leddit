@@ -1,21 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-post-svc
+spec:
+  selector:
+    app: postgres-post
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP # Makes sure the service cannot receive external requests
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-comments-deployment
+  name: postgres-post
   labels:
-    app: postgres-comments
+    app: postgres-post
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-comments
+      app: postgres-post
   template:
     metadata:
       labels:
-        app: postgres-comments
+        app: postgres-post
     spec:
       containers:
-      - name: postgres-comments-container
+      - name: postgres-post
         image: postgres
         imagePullPolicy: Always
         ports:
@@ -27,21 +42,8 @@ spec:
             value: postgres
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
-          name: postgres-comments-pv
+          name: postgres-post-pv
       volumes: #Register volume and volume claim
-      - name: postgres-comments-pv
+      - name: postgres-post-pv
         persistentVolumeClaim:
-          claimName: postgres-comments-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-comments-service
-spec:
-  selector:
-    app: postgres-comments
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
-  type: ClusterIP # Makes sure the service cannot receive external requests
+          claimName: postgres-post-pvc

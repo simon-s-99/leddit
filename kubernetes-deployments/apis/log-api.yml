@@ -1,22 +1,22 @@
-﻿apiVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: useridentityapi-deployment
+  name: log
   labels:
-    app: useridentityapi
+    app: log
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: useridentityapi
+      app: log
   template:
     metadata:
       labels:
-        app: useridentityapi
+        app: log
     spec:
       containers:
-        - name: useridentityapi
-          image: docker.io/library/userimage:latest
+        - name: log
+          image: docker.io/library/log:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080

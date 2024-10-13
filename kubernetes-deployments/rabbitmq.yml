@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbit-svc
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+    - name: rabbitmq
+      protocol: TCP
+      port: 5672
+      targetPort: 5672
+    # - name: management # for management & visualization
+    #   protocol: TCP
+    #   port: 15672
+    #   targetPort: 15672
+  type: ClusterIP # Makes sure the service cannot receive external requests
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  labels:
+    app: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:management
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5672 # RabbitMQ port
+            # - containerPort: 15672 # Management UI port
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: "guest"
+            - name: RABBITMQ_DEFAULT_PASS
+              value: "guest"

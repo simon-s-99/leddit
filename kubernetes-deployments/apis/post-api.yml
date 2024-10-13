@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: logs-deployment
+  name: post-api
   labels:
-    app: logs
+    app: post-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: logs
+      app: post-api
   template:
     metadata:
       labels:
-        app: logs
+        app: post-api
     spec:
       containers:
-        - name: logs-container
-          image: docker.io/library/logs-image:latest
+        - name: post-api
+          image: docker.io/library/post-api:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 8080

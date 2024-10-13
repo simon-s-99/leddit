@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logs.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241011093818_AfterDTORemoved")]
-    partial class AfterDTORemoved
+    [Migration("20241013104639_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

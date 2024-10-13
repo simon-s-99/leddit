@@ -1,10 +1,10 @@
-apiVersion: v1
+﻿apiVersion: v1
 kind: Service
 metadata:
-  name: logs-service
+  name: user-api-svc
 spec:
   selector:
-    app: logs
+    app: user-api
   ports:
     - appProtocol: http
       protocol: TCP

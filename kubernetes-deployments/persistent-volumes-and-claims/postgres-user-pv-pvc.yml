@@ -9,3 +9,16 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: "/mnt/data/postgres-user" # A unique path for user-specific data
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-user-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

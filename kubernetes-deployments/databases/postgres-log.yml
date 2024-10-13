@@ -1,21 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-log-svc
+spec:
+  selector:
+    app: postgres-log
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP # Makes sure the service cannot receive external requests
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-logs-deployment
+  name: postgres-log
   labels:
-    app: postgres-logs
+    app: postgres-log
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-logs
+      app: postgres-log
   template:
     metadata:
       labels:
-        app: postgres-logs
+        app: postgres-log
     spec:
       containers:
-      - name: postgres-logs-container
+      - name: postgres-log
         image: postgres
         imagePullPolicy: Always
         ports:
@@ -27,21 +42,8 @@ spec:
             value: postgres
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
-          name: postgres-logs-pv
+          name: postgres-log-pv
       volumes: #Register volume and volume claim
-      - name: postgres-logs-pv
+      - name: postgres-log-pv
         persistentVolumeClaim:
-          claimName: postgres-logs-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-logs-service
-spec:
-  selector:
-    app: postgres-logs
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
-  type: ClusterIP # Makes sure the service cannot receive external requests
+          claimName: postgres-log-pvc

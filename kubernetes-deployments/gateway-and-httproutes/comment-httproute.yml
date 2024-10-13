@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: comments
+  name: comment-httproute
 spec:
   parentRefs:
   - name: prod-web
@@ -9,7 +9,7 @@ spec:
   - matches:
     - path:
         type: PathPrefix
-        value: /comments
+        value: /api/comments
     backendRefs:
-    - name: comments-service
+    - name: comment-api-svc
       port: 8080
