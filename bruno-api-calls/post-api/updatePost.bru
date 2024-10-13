@@ -1,15 +1,22 @@
 meta {
-  name: deletePost
+  name: updatePost
   type: http
-  seq: 3
+  seq: 4
 }
 
-delete {
+put {
   url: http://127.0.0.1/api/posts?id=f07974a7-5d34-4f6e-aaf2-2cd0906dda99
-  body: none
+  body: json
   auth: none
 }
 
 params:query {
   id: f07974a7-5d34-4f6e-aaf2-2cd0906dda99
+}
+
+body:json {
+  {
+    "title": "hello! hello!",
+    "content": "yo! yoyoyoyoy maaaaaaaaang"
+  }
 }

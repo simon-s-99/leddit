@@ -1,17 +1,18 @@
 meta {
-  name: addPost
+  name: createPost
   type: http
   seq: 1
 }
 
 post {
-  url: http://127.0.0.1:51665/api/posts
+  url: http://127.0.0.1/api/posts
   body: json
   auth: none
 }
 
 body:json {
   {
+    "userid": "202a706c-609d-4ed9-b78c-bfee1aec76a1",  
     "title": "hello!",
     "content": "yo!"
   }
