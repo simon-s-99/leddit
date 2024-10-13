@@ -4,7 +4,7 @@ metadata:
   name: rabbit-svc
 spec:
   selector:
-    app: rabbit
+    app: rabbitmq
   ports:
     - name: rabbitmq
       protocol: TCP
