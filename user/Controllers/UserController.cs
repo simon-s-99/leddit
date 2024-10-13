@@ -116,8 +116,11 @@ namespace UserService.Controllers
         public async Task<IActionResult> GetUserId(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
+
             if (user == null)
+            {
                 return NotFound("User not found");
+            }
 
             return Ok(new { UserId = user.Id });
         }

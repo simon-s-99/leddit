@@ -1,0 +1,20 @@
+meta {
+  name: editUserProfile
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://127.0.0.1/api/user/profile
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "displayname": "name",
+    "bio": "Cool story bro.",
+    "profilepictureurl": "http://example.com/cool-pic",
+    "dateofbirth": "1990-03-03"
+  }
+}
